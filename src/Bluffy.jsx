@@ -116,8 +116,28 @@ const QS=[
 const ICONS={general_knowledge:"🧠",history:"📜",geography:"🌍",flags:"🏳️",movies:"🎬",cartoons:"📺",famous:"⭐",sport:"🏆",football:"⚽",fashion:"👗",strange_questions:"🤯",science:"🔬"};
 const CATS=Object.keys(ICONS);
 const EMO=["😎","🤩","🥳","😏","🤓"];
-const DECOYS={geography:["Paris","London","Tokyo","Beijing","Moscow"],history:["1066","1492","1776","1939","1969"],science:["Hydrogen","Helium","Carbon","Iron"],flags:["Sweden","Norway","Denmark","Poland","Austria"],movies:["Tom Hanks","Brad Pitt","1985","Gotham"],cartoons:["Blossom","Tommy","Squidward","Sandy"],famous:["Tesla","Edison","Newton","Darwin"],sport:["100","200","42","1936"],football:["Barcelona","Liverpool","Bayern","Ajax"],fashion:["Gucci","Prada","Versace","Dior"],strange_questions:["2","4","6","8","Blue"],general_knowledge:["8","12","24","100","Jupiter"]};
+const DECOYS={
+  general_knowledge:{en:["8","12","24","48","100","Mercury","Venus","Jupiter","Saturn","Oxygen","Helium","Silver","32","64","1000","Brain","Liver","Heart"],he:["8","12","24","48","100","כוכב חמה","נוגה","צדק","שבתאי","חמצן","הליום","כסף","32","64","מוח","כבד","לב"]},
+  history:{en:["1066","1492","1776","1812","1848","1914","1939","1969","1989","2001","Rome","Athens","Sparta","Napoleon","Caesar","Vikings"],he:["1066","1492","1776","1812","1848","1914","1939","1969","1989","2001","רומא","אתונה","ספרטה","נפוליאון","קיסר","ויקינגים"]},
+  geography:{en:["Paris","London","Tokyo","Beijing","Moscow","Cairo","Sydney","Rome","Berlin","Madrid","Bangkok","Dubai","Lagos","Mumbai","Seoul","Lima","Ankara"],he:["פריז","לונדון","טוקיו","בייג'ינג","מוסקבה","קהיר","סידני","רומא","ברלין","מדריד","בנגקוק","דובאי","מומבאי","סיאול","לימה"]},
+  flags:{en:["Sweden","Norway","Denmark","Poland","Hungary","Austria","Belgium","Netherlands","Portugal","Ireland","Iceland","Greece","Switzerland","Finland","Estonia","Latvia"],he:["שוודיה","נורבגיה","דנמרק","פולין","הונגריה","אוסטריה","בלגיה","הולנד","פורטוגל","אירלנד","איסלנד","יוון","שוויץ","פינלנד","אסטוניה"]},
+  movies:{en:["Tom Hanks","Brad Pitt","1985","1992","2001","Gotham","Metropolis","Wakanda","Neverland","Hogwarts","Neo","Gandalf","Frodo","Thanos","Yoda"],he:["טום הנקס","בראד פיט","1985","1992","2001","גותהם","מטרופוליס","וואקנדה","הוגוורטס","גנדלף","תאנוס","יודה","פרודו"]},
+  cartoons:{en:["Blossom","Bubbles","Tommy","Squidward","Sandy","Gary","Timmy","Dora","Boots","Scooby","Shaggy","Elmo","Bugs Bunny","Daffy","Goofy"],he:["בלוסום","באבלס","טומי","סקווידוורד","סנדי","גארי","טימי","דורה","סקובי","באגס באני","גופי","דאפי"]},
+  famous:{en:["Nikola Tesla","Thomas Edison","Isaac Newton","Charles Darwin","Galileo","Archimedes","Mozart","Beethoven","Picasso","Van Gogh","Aristotle","Plato","Socrates"],he:["ניקולה טסלה","תומאס אדיסון","אייזק ניוטון","צ'רלס דרווין","גלילאו","ארכימדס","מוצרט","בטהובן","פיקאסו","ואן גוך","אריסטו","אפלטון"]},
+  sport:{en:["100","200","42","1900","1924","1936","1952","1968","1984","Swimming","Boxing","Cycling","Wrestling","Fencing","Rowing","Hockey"],he:["100","200","42","1900","1924","1936","1952","1968","שחייה","אגרוף","רכיבה","היאבקות","סיוף","חתירה","הוקי"]},
+  football:{en:["Barcelona","Liverpool","Bayern Munich","Juventus","AC Milan","Ajax","Porto","Benfica","Chelsea","Arsenal","PSG","Dortmund","Inter Milan","Atletico"],he:["ברצלונה","ליברפול","באיירן מינכן","יובנטוס","מילאן","אייאקס","פורטו","צ'לסי","ארסנל","פ.ס.ז'","דורטמונד","אינטר","אטלטיקו"]},
+  fashion:{en:["Gucci","Prada","Versace","Armani","Dior","Louis Vuitton","Burberry","Balenciaga","Hermes","Fendi","Valentino","Givenchy","YSL","Zara","H&M"],he:["גוצ'י","פראדה","ורסאצ'ה","ארמני","דיור","לואי ויטון","ברברי","בלנסיאגה","הרמס","פנדי","ולנטינו","זארה"]},
+  strange_questions:{en:["2","4","6","8","10","12","15","20","Blue","Green","Purple","Orange","Pink","Yellow","White","Black"],he:["2","4","6","8","10","12","15","20","כחול","ירוק","סגול","כתום","ורוד","צהוב","לבן","שחור"]},
+  science:{en:["Hydrogen","Helium","Carbon","Iron","Oxygen","Sodium","Calcium","Mercury","Uranium","Lithium","Platinum","Copper","Zinc","Lead","Neon","Argon"],he:["מימן","הליום","פחמן","ברזל","חמצן","נתרן","סידן","כספית","אורניום","ליתיום","פלטינה","נחושת","אבץ","עופרת","ניאון"]},
+};
 
+function genDecoy(q,ex,ln){
+  const bk=DECOYS[q.category]||DECOYS.general_knowledge;
+  const pool=ln==="he"?(bk.he||bk.en):bk.en;
+  const ne=ex.map(norm);
+  const av=pool.filter(d=>!ne.some(e=>fuzz(d,e)));
+  return av.length?av[Math.floor(Math.random()*av.length)]:(ln==="he"?"לא יודע":"Unknown");
+}
 const T={en:{appName:"Bluffy",tagline:"Bluff your way to the win",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back"},
 he:{appName:"Bluffy",tagline:"בלוף את דרכך עד לניצחון",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה"}};
 
@@ -125,7 +145,6 @@ function norm(s){return s.toLowerCase().trim().replace(/[^\w\s\u0590-\u05FF]/g,"
 function lev(a,b){const m=a.length,n=b.length,d=Array.from({length:m+1},()=>Array(n+1).fill(0));for(let i=0;i<=m;i++)d[i][0]=i;for(let j=0;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));return d[m][n];}
 function fuzz(i,c){const a=norm(i),b=norm(c);if(!a||!b)return false;if(a===b)return true;if(a.includes(b)||b.includes(a))return true;return lev(a,b)<=(b.length<=8?2:3);}
 function strictMatch(i,c){const a=norm(i),b=norm(c);if(!a||!b)return false;return a===b;}
-function genDecoy(q,ex){const bk=DECOYS[q.category]||DECOYS.general_knowledge;const ne=ex.map(norm);const av=bk.filter(d=>!ne.some(e=>fuzz(d,e)));return av.length?av[Math.floor(Math.random()*av.length)]:"Unknown";}
 function genCode(){let r="";for(let i=0;i<6;i++)r+=Math.floor(Math.random()*10);if(r[0]==="0")r="1"+r.slice(1);return r;}
 function genUid(){return"u"+Math.random().toString(36).slice(2,10)+Date.now().toString(36);}
 
@@ -268,18 +287,18 @@ export default function Bluffy(){
 
   const skipBluff=()=>{
     if(!room||!rd?.question)return;
-    const q=rd.question;const ex=[...Object.values(rd.publicAnswers||{}),q.answer_en];
-    set(ref(db,`rooms/${room}/publicAnswers/${uid}`),genDecoy(q,ex));
+    const q=rd.question;const ln=rd.lang||lang;const ex=[...Object.values(rd.publicAnswers||{}),q.answer_en,q.answer_he];
+    set(ref(db,`rooms/${room}/publicAnswers/${uid}`),genDecoy(q,ex,ln));
   };
 
   const hostAutoProgress=()=>{
     if(!isHost||!room)return;
-    const u={};
+    const ln=rd.lang||lang;const u={};
     playerList.forEach(([id])=>{
       if(!rd?.answers?.[id])u[`answers/${id}`]={text:"—",ok:false};
       if(!rd?.publicAnswers?.[id]){
         const a=rd?.answers?.[id];
-        if(a?.ok){const q=rd.question;u[`publicAnswers/${id}`]=genDecoy(q,[...Object.values(rd.publicAnswers||{}),q.answer_en]);}
+        if(a?.ok){const q=rd.question;u[`publicAnswers/${id}`]=genDecoy(q,[...Object.values(rd.publicAnswers||{}),q.answer_en,q.answer_he],ln);}
         else u[`publicAnswers/${id}`]="—";
       }
     });
@@ -289,13 +308,39 @@ export default function Bluffy(){
   const hostMoveToReveal=()=>{
     if(!isHost||!rd?.question)return;
     const q=rd.question;const ln=rd.lang||lang;const ca=ln==="he"?q.answer_he:q.answer_en;
-    const os=[{text:ca,ok:true,ai:"",an:""}];const seen=new Set([norm(ca)]);
+    
+    // Group duplicate wrong answers: { normalizedText: { text, authors: [{id,name}] } }
+    const groups={};
     Object.entries(rd.publicAnswers||{}).forEach(([id,txt])=>{
-      if(txt==="—")return;const n=norm(txt);
-      if(!seen.has(n)&&!fuzz(txt,q.answer_en)&&!fuzz(txt,q.answer_he)){
-        os.push({text:txt,ok:false,ai:id,an:rd.players?.[id]?.name||"?"});seen.add(n);}
+      if(txt==="—")return;
+      const n=norm(txt);
+      if(n===norm(ca)||fuzz(txt,q.answer_en)||fuzz(txt,q.answer_he))return; // skip correct
+      if(groups[n]){groups[n].authors.push({id,name:rd.players?.[id]?.name||"?"});}
+      else{groups[n]={text:txt,authors:[{id,name:rd.players?.[id]?.name||"?"}]};}
     });
-    while(os.length<3){const ex=os.map(o=>o.text);const d=genDecoy(q,ex);if(!seen.has(norm(d))){os.push({text:d,ok:false,ai:"sys",an:"Auto"});seen.add(norm(d));}else break;}
+    
+    // Build options: 1 correct + unique wrong answers
+    const os=[{text:ca,ok:true,ai:[],an:[]}];
+    const seen=new Set([norm(ca)]);
+    Object.values(groups).forEach(g=>{
+      os.push({text:g.text,ok:false,ai:g.authors.map(a=>a.id),an:g.authors.map(a=>a.name)});
+      seen.add(norm(g.text));
+    });
+    
+    // Target: playerCount + 1 options, minimum 4
+    const target=Math.max(4,playerCount+1);
+    let attempts=0;
+    while(os.length<target&&attempts<30){
+      const ex=os.map(o=>o.text);
+      const d=genDecoy(q,ex,ln);
+      if(!seen.has(norm(d))){
+        os.push({text:d,ok:false,ai:["sys"],an:["Auto"]});
+        seen.add(norm(d));
+      }
+      attempts++;
+    }
+    
+    // Shuffle
     for(let i=os.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[os[i],os[j]]=[os[j],os[i]];}
     update(ref(db,`rooms/${room}`),{state:"reveal",options:os,correctAnswer:ca,selections:null});
   };
@@ -306,14 +351,29 @@ export default function Bluffy(){
     if(!isHost||!rd?.options)return;
     const opts=rd.options;const res={};const su={};
     playerList.forEach(([id])=>{res[id]={e:0,fb:[],sf:false};});
-    Object.entries(rd.selections||{}).forEach(([id,oi])=>{if(opts[oi]?.ok){res[id].e+=2;su[`players/${id}/score`]=(rd.players[id]?.score||0)+2;}});
+    
+    // +2 for picking correct answer
+    Object.entries(rd.selections||{}).forEach(([id,oi])=>{
+      if(opts[oi]?.ok){res[id].e+=2;su[`players/${id}/score`]=(rd.players[id]?.score||0)+2;}
+    });
+    
+    // +1 per fool for each author of picked wrong answer (not self-fool)
     Object.entries(rd.selections||{}).forEach(([id,oi])=>{
       const s=opts[oi];
-      if(!s?.ok&&s?.ai&&s.ai!=="sys"){
-        if(s.ai===id)res[id].sf=true;
-        else{res[s.ai].e+=1;res[s.ai].fb.push(rd.players[id]?.name||"?");su[`players/${s.ai}/score`]=(su[`players/${s.ai}/score`]??rd.players[s.ai]?.score??0)+1;}
+      if(!s?.ok&&Array.isArray(s?.ai)){
+        const isSys=s.ai.length===1&&s.ai[0]==="sys";
+        if(isSys)return; // system decoy, no points
+        const isSelfFool=s.ai.includes(id);
+        if(isSelfFool){res[id].sf=true;return;} // self-fool = 0
+        // Give +1 to ALL authors of this answer
+        s.ai.forEach(authorId=>{
+          res[authorId].e+=1;
+          res[authorId].fb.push(rd.players[id]?.name||"?");
+          su[`players/${authorId}/score`]=(su[`players/${authorId}/score`]??rd.players[authorId]?.score??0)+1;
+        });
       }
     });
+    
     update(ref(db,`rooms/${room}`),{state:"post",results:res,...su});
   };
 
@@ -499,14 +559,14 @@ export default function Bluffy(){
       {rd.question?.flag_country&&<FI c={rd.question.flag_country}/>}
       <p style={{color:"#4ade80",fontSize:24,fontWeight:800,margin:"8px 0"}}>{rd.correctAnswer}</p>
     </div>
-    {playerList.map(([id,p],i)=>{const r=rd.results[id]||{};const oi=rd.selections?.[id];const pk=rd.options?.[oi];return<div key={id} style={{...C,marginBottom:8,padding:"12px 16px",borderColor:r.e>0?"rgba(255,215,0,.2)":"rgba(255,255,255,.06)"}}>
+    {playerList.map(([id,p],i)=>{const r=rd.results[id]||{};const oi=rd.selections?.[id];const pk=rd.options?.[oi];const pkAuthors=Array.isArray(pk?.an)?pk.an.join(", "):"";const pkIsPlayer=Array.isArray(pk?.ai)&&!pk.ai.includes("sys")&&pk.ai.length>0;return<div key={id} style={{...C,marginBottom:8,padding:"12px 16px",borderColor:r.e>0?"rgba(255,215,0,.2)":"rgba(255,255,255,.06)"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div style={{display:"flex",alignItems:"center",gap:10,flex:1,minWidth:0}}>
           <span style={{fontSize:22}}>{EMO[i]||"🎮"}</span>
           <div style={{minWidth:0}}>
             <p style={{color:"#fff",fontWeight:700,margin:0,fontSize:14}}>{p.name}</p>
             <p style={{color:pk?.ok?"#4ade80":"#f87171",fontSize:12,margin:"2px 0 0"}}>{pk?.ok?"✓ ":"✗ "}{pk?.text||"—"}{r.sf?<span style={{color:"#FFA500",marginInlineStart:6}}>({t.selfFool})</span>:""}</p>
-            {!pk?.ok&&pk?.ai&&pk.ai!=="sys"&&<p style={{color:"rgba(255,255,255,.3)",fontSize:11}}>{t.wroteBy} {pk.an}</p>}
+            {!pk?.ok&&pkIsPlayer&&pkAuthors&&<p style={{color:"rgba(255,255,255,.3)",fontSize:11}}>{t.wroteBy} {pkAuthors}</p>}
             {r.fb?.length>0&&<p style={{color:"#C084FC",fontSize:11}}>{t.fooled} {r.fb.length}: {r.fb.join(", ")}</p>}
           </div>
         </div>
@@ -516,10 +576,10 @@ export default function Bluffy(){
     </div>;})}
     <div style={{...C,margin:"12px 0 16px"}}>
       <p style={{color:"rgba(255,255,255,.4)",fontSize:12,textTransform:"uppercase",letterSpacing:1,margin:"0 0 8px"}}>{t.allAns}</p>
-      {(rd.options||[]).map((o,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:i<rd.options.length-1?"1px solid rgba(255,255,255,.05)":"none"}}>
+      {(rd.options||[]).map((o,i)=>{const authors=Array.isArray(o.an)?o.an.filter(n=>n!=="Auto").join(", "):"";return<div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:i<rd.options.length-1?"1px solid rgba(255,255,255,.05)":"none"}}>
         <span style={{color:o.ok?"#4ade80":"#fff",fontWeight:o.ok?700:400,fontSize:13}}>{o.ok?"✓ ":""}{o.text}</span>
-        <span style={{color:"rgba(255,255,255,.3)",fontSize:11}}>{o.ok?t.correct:o.an||""}</span>
-      </div>)}
+        <span style={{color:"rgba(255,255,255,.3)",fontSize:11}}>{o.ok?t.correct:authors||t.auto}</span>
+      </div>;})}
     </div>
     <div style={{...C,marginBottom:20}}>
       <h3 style={{color:"#FFD700",margin:"0 0 10px",fontSize:15,textAlign:"center"}}>{t.scoreboard}</h3>
