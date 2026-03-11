@@ -116,59 +116,109 @@ const QS=[
 const ICONS={general_knowledge:"🧠",history:"📜",geography:"🌍",flags:"🏳️",movies:"🎬",cartoons:"📺",famous:"⭐",sport:"🏆",football:"⚽",fashion:"👗",strange_questions:"🤯",science:"🔬"};
 const CATS=Object.keys(ICONS);
 const EMO=["😎","🤩","🥳","😏","🤓"];
-const DECOYS={
-  general_knowledge:{en:["8","12","24","48","100","Mercury","Venus","Jupiter","Saturn","Oxygen","Helium","Silver","32","64","1000","Brain","Liver","Heart"],he:["8","12","24","48","100","כוכב חמה","נוגה","צדק","שבתאי","חמצן","הליום","כסף","32","64","מוח","כבד","לב"]},
-  history:{en:["1066","1492","1776","1812","1848","1914","1939","1969","1989","2001","Rome","Athens","Sparta","Napoleon","Caesar","Vikings"],he:["1066","1492","1776","1812","1848","1914","1939","1969","1989","2001","רומא","אתונה","ספרטה","נפוליאון","קיסר","ויקינגים"]},
-  geography:{en:["Paris","London","Tokyo","Beijing","Moscow","Cairo","Sydney","Rome","Berlin","Madrid","Bangkok","Dubai","Lagos","Mumbai","Seoul","Lima","Ankara"],he:["פריז","לונדון","טוקיו","בייג'ינג","מוסקבה","קהיר","סידני","רומא","ברלין","מדריד","בנגקוק","דובאי","מומבאי","סיאול","לימה"]},
-  flags:{en:["Sweden","Norway","Denmark","Poland","Hungary","Austria","Belgium","Netherlands","Portugal","Ireland","Iceland","Greece","Switzerland","Finland","Estonia","Latvia"],he:["שוודיה","נורבגיה","דנמרק","פולין","הונגריה","אוסטריה","בלגיה","הולנד","פורטוגל","אירלנד","איסלנד","יוון","שוויץ","פינלנד","אסטוניה"]},
-  movies:{en:["Tom Hanks","Brad Pitt","1985","1992","2001","Gotham","Metropolis","Wakanda","Neverland","Hogwarts","Neo","Gandalf","Frodo","Thanos","Yoda"],he:["טום הנקס","בראד פיט","1985","1992","2001","גותהם","מטרופוליס","וואקנדה","הוגוורטס","גנדלף","תאנוס","יודה","פרודו"]},
-  cartoons:{en:["Blossom","Bubbles","Tommy","Squidward","Sandy","Gary","Timmy","Dora","Boots","Scooby","Shaggy","Elmo","Bugs Bunny","Daffy","Goofy"],he:["בלוסום","באבלס","טומי","סקווידוורד","סנדי","גארי","טימי","דורה","סקובי","באגס באני","גופי","דאפי"]},
-  famous:{en:["Nikola Tesla","Thomas Edison","Isaac Newton","Charles Darwin","Galileo","Archimedes","Mozart","Beethoven","Picasso","Van Gogh","Aristotle","Plato","Socrates"],he:["ניקולה טסלה","תומאס אדיסון","אייזק ניוטון","צ'רלס דרווין","גלילאו","ארכימדס","מוצרט","בטהובן","פיקאסו","ואן גוך","אריסטו","אפלטון"]},
-  sport:{en:["100","200","42","1900","1924","1936","1952","1968","1984","Swimming","Boxing","Cycling","Wrestling","Fencing","Rowing","Hockey"],he:["100","200","42","1900","1924","1936","1952","1968","שחייה","אגרוף","רכיבה","היאבקות","סיוף","חתירה","הוקי"]},
-  football:{en:["Barcelona","Liverpool","Bayern Munich","Juventus","AC Milan","Ajax","Porto","Benfica","Chelsea","Arsenal","PSG","Dortmund","Inter Milan","Atletico"],he:["ברצלונה","ליברפול","באיירן מינכן","יובנטוס","מילאן","אייאקס","פורטו","צ'לסי","ארסנל","פ.ס.ז'","דורטמונד","אינטר","אטלטיקו"]},
-  fashion:{en:["Gucci","Prada","Versace","Armani","Dior","Louis Vuitton","Burberry","Balenciaga","Hermes","Fendi","Valentino","Givenchy","YSL","Zara","H&M"],he:["גוצ'י","פראדה","ורסאצ'ה","ארמני","דיור","לואי ויטון","ברברי","בלנסיאגה","הרמס","פנדי","ולנטינו","זארה"]},
-  strange_questions:{en:["2","4","6","8","10","12","15","20","Blue","Green","Purple","Orange","Pink","Yellow","White","Black"],he:["2","4","6","8","10","12","15","20","כחול","ירוק","סגול","כתום","ורוד","צהוב","לבן","שחור"]},
-  science:{en:["Hydrogen","Helium","Carbon","Iron","Oxygen","Sodium","Calcium","Mercury","Uranium","Lithium","Platinum","Copper","Zinc","Lead","Neon","Argon"],he:["מימן","הליום","פחמן","ברזל","חמצן","נתרן","סידן","כספית","אורניום","ליתיום","פלטינה","נחושת","אבץ","עופרת","ניאון"]},
-};
 
-function genDecoy(q,ex,ln){
-  const bk=DECOYS[q.category]||DECOYS.general_knowledge;
-  const pool=ln==="he"?(bk.he||bk.en):bk.en;
-  const ne=ex.map(norm);
+// Smart decoy: uses TYPE_DECOYS + detectAnswerType
+function genDecoy(q,existingTexts,ln){
+  const aType=detectAnswerType(q);
+  const bank=TYPE_DECOYS[aType]||TYPE_DECOYS.general;
+  const pool=ln==="he"?bank.he:bank.en;
+  const ne=existingTexts.map(norm);
   const av=pool.filter(d=>!ne.some(e=>e===norm(d)));
-  return av.length?av[Math.floor(Math.random()*av.length)]:(ln==="he"?"לא יודע":"Unknown");
+  if(av.length)return av[Math.floor(Math.random()*av.length)];
+  const fb=ln==="he"?TYPE_DECOYS.general.he:TYPE_DECOYS.general.en;
+  const av2=fb.filter(d=>!ne.some(e=>e===norm(d)));
+  return av2.length?av2[Math.floor(Math.random()*av2.length)]:(ln==="he"?"לא יודע":"Unknown");
 }
-const T={en:{appName:"Bluffy",tagline:"Bluff your way to the win",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back"},
-he:{appName:"Bluffy",tagline:"בלוף את דרכך עד לניצחון ",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה"}};
+
+const T={en:{appName:"Bluffy",tagline:"Bluff your way to the win",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back",howToPlay:"How to Play",howTitle:"How to Play Bluffy",howBody:"1. Create a room and share the code\n2. Each round, one player picks a category\n3. Everyone types their answer\n4. If CORRECT — write a convincing WRONG answer to fool others!\n5. All answers shuffled as multiple choice\n6. Everyone picks what they think is correct\n\nScoring:\n+2 for correct pick\n+1 per player your fake answer fools\n0 if you pick your own fake (self-fool!)\n\nMost points wins!",close:"Close"},
+he:{appName:"Bluffy",tagline:"בלוף את דרכך עד לניצחון",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה",howToPlay:"איך משחקים",howTitle:"איך משחקים בבלאפי",howBody:"1. צרו חדר ושתפו את הקוד עם חברים\n2. כל סיבוב, שחקן בוחר קטגוריה\n3. כולם מקלידים תשובה\n4. אם נכון — כתבו תשובה שגויה משכנעת!\n5. כל התשובות מעורבבות כרב-ברירה\n6. כולם בוחרים את הנכונה\n\nניקוד:\n+2 על בחירה נכונה\n+1 לכל שחקן שהבלאף שלכם רימה\n0 אם בחרתם בבלאף שלכם!\n\nהכי הרבה נקודות מנצח!",close:"סגור"}};
+
 
 function norm(s){return s.toLowerCase().trim().replace(/[^\w\s\u0590-\u05FF]/g,"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ");}
 function lev(a,b){const m=a.length,n=b.length,d=Array.from({length:m+1},()=>Array(n+1).fill(0));for(let i=0;i<=m;i++)d[i][0]=i;for(let j=0;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));return d[m][n];}
 
-// isCorrect: used ONLY to check if a player's answer matches the correct answer
-// Strict but allows small typos — NO includes() check
+// Smart IR-like answer matching
 function isCorrect(input,correct){
   const a=norm(input),b=norm(correct);
   if(!a||!b)return false;
+  // Exact match
   if(a===b)return true;
-  // For very short answers (numbers, 1-3 chars), must be exact
+  // For numbers: must be exact
+  if(/^\d+\.?\d*$/.test(b))return a===b;
+  // For short answers (1-3 chars like Au, H2O): exact only
   if(b.length<=3)return a===b;
-  // For medium (4-8 chars), allow Levenshtein 1
+  // Partial name match: if correct is multi-word, accept any single significant word
+  // e.g. "Neil Armstrong" → accept "armstrong" or "neil"
+  const bWords=b.split(" ").filter(w=>w.length>=3);
+  const aWords=a.split(" ").filter(w=>w.length>=3);
+  if(bWords.length>=2){
+    // Accept if user typed one key word (last name or first name)
+    if(aWords.length===1&&bWords.some(bw=>lev(aWords[0],bw)<=1))return true;
+    // Accept if user typed both words with small typos
+    if(aWords.length>=2){
+      let matched=0;
+      for(const aw of aWords){if(bWords.some(bw=>lev(aw,bw)<=1))matched++;}
+      if(matched>=bWords.length)return true;
+    }
+  }
+  // Single word: allow small typo
   if(b.length<=8)return lev(a,b)<=1;
-  // For long answers (9+), allow Levenshtein 2
   return lev(a,b)<=2;
 }
 
-// isSameText: used to check if two wrong answers are the same (for grouping duplicates)
+// Check if two texts are the same (for grouping)
 function isSameText(a,b){return norm(a)===norm(b);}
 
-// capitalize: uppercase first letter, lowercase rest (for English display)
-function capitalize(s,ln){
-  if(!s||ln==="he")return s;
-  return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase();
+// Title Case: capitalize first letter of each word
+function titleCase(s,ln){
+  if(!s)return s;
+  // Don't touch Hebrew
+  if(ln==="he"||/[\u0590-\u05FF]/.test(s))return s;
+  return s.replace(/\w\S*/g,w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase());
 }
 
-// strictMatch: exact normalized match only (for bluff rejection)
+// Strict match for bluff rejection
 function strictMatch(i,c){const a=norm(i),b=norm(c);if(!a||!b)return false;return a===b;}
+
+// Detect answer type for smart decoys
+function detectAnswerType(q){
+  const aEn=q.answer_en||"";
+  const aHe=q.answer_he||"";
+  if(q.flag_country)return"country";
+  if(/^\d{3,4}$/.test(aEn))return"year";
+  if(/^\d+\.?\d*$/.test(aEn))return"number";
+  if(q.category==="flags")return"country";
+  // Check if it's a person name (contains space, not a place)
+  if(aEn.split(" ").length>=2&&/^[A-Z]/.test(aEn)&&!["Pacific Ocean","Atlantic Ocean","Indian Ocean","Arctic Ocean","South America","North America","Vatican City","New Zealand","Old Trafford","Real Madrid","Mongol Empire","Blue whale","Carbon dioxide"].includes(aEn))return"person";
+  if(q.category==="famous")return"person";
+  // Country names
+  if(["geography","flags"].includes(q.category)&&!aEn.match(/^\d/))return"country";
+  return"general";
+}
+
+// Smart decoy bank by answer type
+const TYPE_DECOYS={
+  person:{
+    en:["Alexander Hamilton","Marco Polo","Nikola Tesla","Thomas Edison","Charles Darwin","Galileo Galilei","Wolfgang Mozart","Pablo Picasso","Vincent Van Gogh","Isaac Newton","Benjamin Franklin","Napoleon Bonaparte","Aristotle","Plato","Sigmund Freud","Henry Ford","James Watt","Louis Pasteur","Copernicus","Archimedes","Jules Verne","Mark Twain","Oscar Wilde","Frida Kahlo"],
+    he:["אלכסנדר המילטון","מרקו פולו","ניקולה טסלה","תומאס אדיסון","צ'רלס דרווין","גלילאו גלילאי","וולפגנג מוצרט","פבלו פיקאסו","וינסנט ואן גוך","אייזק ניוטון","בנג'מין פרנקלין","נפוליאון בונפרטה","אריסטו","אפלטון","זיגמונד פרויד","הנרי פורד","לואי פסטר","קופרניקוס","ארכימדס","ז'ול ורן","מארק טוויין","אוסקר ויילד","פרידה קאלו"]
+  },
+  year:{
+    en:["1066","1215","1453","1492","1588","1776","1789","1815","1848","1865","1903","1914","1929","1939","1945","1961","1969","1989","2001","2008"],
+    he:["1066","1215","1453","1492","1588","1776","1789","1815","1848","1865","1903","1914","1929","1939","1945","1961","1969","1989","2001","2008"]
+  },
+  number:{
+    en:["2","3","4","5","6","7","8","9","10","11","12","13","15","17","20","24","27","32","42","48","52","64","88","100","150","200","206","365","1000"],
+    he:["2","3","4","5","6","7","8","9","10","11","12","13","15","17","20","24","27","32","42","48","52","64","88","100","150","200","206","365","1000"]
+  },
+  country:{
+    en:["Sweden","Norway","Denmark","Poland","Hungary","Austria","Belgium","Netherlands","Portugal","Ireland","Iceland","Greece","Switzerland","Finland","Estonia","Latvia","Lithuania","Croatia","Serbia","Bulgaria","Morocco","Algeria","Tunisia","Libya","Chile","Peru","Bolivia","Ecuador","Venezuela","Cuba","Jamaica","Panama","Costa Rica","Guatemala","Philippines","Vietnam","Malaysia","Thailand","Cambodia","Myanmar","Sri Lanka","Nepal","Bangladesh","Pakistan","Kazakhstan","Uzbekistan","Qatar","Bahrain","Kuwait","Oman","Jordan","Lebanon"],
+    he:["שוודיה","נורבגיה","דנמרק","פולין","הונגריה","אוסטריה","בלגיה","הולנד","פורטוגל","אירלנד","איסלנד","יוון","שוויץ","פינלנד","אסטוניה","לטביה","ליטא","קרואטיה","סרביה","בולגריה","מרוקו","אלג'יריה","תוניסיה","לוב","צ'ילה","פרו","בוליביה","אקוודור","ונצואלה","קובה","ג'מייקה","פנמה","קוסטה ריקה","גואטמלה","הפיליפינים","וייטנאם","מלזיה","תאילנד","קמבודיה","מיאנמר","סרי לנקה","נפאל","בנגלדש","פקיסטן","קזחסטן","אוזבקיסטן","קטאר","בחריין","כווית","עומאן","ירדן","לבנון"]
+  },
+  general:{
+    en:["Mercury","Venus","Jupiter","Saturn","Oxygen","Helium","Silver","Gold","Platinum","Copper","Iron","Diamond","Granite","Marble","Cotton","Silk","Wool","Leather","Bamboo","Coral","Ivory","Bronze","Titanium","Emerald","Ruby","Sapphire"],
+    he:["כוכב חמה","נוגה","צדק","שבתאי","חמצן","הליום","כסף","זהב","פלטינה","נחושת","ברזל","יהלום","גרניט","שיש","כותנה","משי","צמר","עור","במבוק","אלמוג","שנהב","ארד","טיטניום","אזמרגד","אודם","ספיר"]
+  }
+};
 function genCode(){let r="";for(let i=0;i<6;i++)r+=Math.floor(Math.random()*10);if(r[0]==="0")r="1"+r.slice(1);return r;}
 function genUid(){return"u"+Math.random().toString(36).slice(2,10)+Date.now().toString(36);}
 
@@ -184,6 +234,7 @@ export default function Bluffy(){
   const[bi,setBi]=useState("");
   const[err,setErr]=useState("");
   const[copied,setCopied]=useState(false);
+  const[showHelp,setShowHelp]=useState(false);
   const[timer,setTimer]=useState(0);
   const timerRef=useRef(null);
 
@@ -297,7 +348,7 @@ export default function Bluffy(){
   const submitAnswer=()=>{
     if(!ci.trim()||!room||!rd?.question)return;
     const q=rd.question;const ln=rd.lang||lang;
-    const text=capitalize(ci.trim(),ln);
+    const text=titleCase(ci.trim(),ln);
     const ok=isCorrect(ci,q.answer_en)||isCorrect(ci,q.answer_he);
     update(ref(db,`rooms/${room}/answers/${uid}`),{text,ok});
     if(!ok)set(ref(db,`rooms/${room}/publicAnswers/${uid}`),text);
@@ -308,7 +359,7 @@ export default function Bluffy(){
     if(!bi.trim()||!room||!rd?.question)return;
     const q=rd.question;const ln=rd.lang||lang;
     if(strictMatch(bi,q.answer_en)||strictMatch(bi,q.answer_he))return;
-    const text=capitalize(bi.trim(),ln);
+    const text=titleCase(bi.trim(),ln);
     set(ref(db,`rooms/${room}/publicAnswers/${uid}`),text);setBi("");
   };
 
@@ -353,7 +404,7 @@ export default function Bluffy(){
         existing.authorNames.push(rd.players?.[id]?.name||"?");
       }else{
         groups.push({
-          displayText:capitalize(txt,ln),
+          displayText:titleCase(txt,ln),
           authorIds:[id],
           authorNames:[rd.players?.[id]?.name||"?"]
         });
@@ -379,7 +430,7 @@ export default function Bluffy(){
       const d=genDecoy(q,allTexts,ln);
       const nd=norm(d);
       if(!usedTexts.has(nd)){
-        os.push({text:capitalize(d,ln),ok:false,ai:["sys"],an:[]});
+        os.push({text:titleCase(d,ln),ok:false,ai:["sys"],an:[]});
         usedTexts.add(nd);
       }
       attempts++;
@@ -470,6 +521,14 @@ export default function Bluffy(){
     <input value={myName} onChange={e=>setMyName(e.target.value)} placeholder={t.enterName} maxLength={12} style={{...I,width:260,textAlign:"center",fontSize:18,marginBottom:16}}/>
     <button onClick={createRoom} style={{...B,background:"linear-gradient(135deg,#FFD700,#FFA500)",color:"#1a1a2e",fontSize:18,fontWeight:800,padding:"16px 0",borderRadius:14,width:260,marginBottom:12,boxShadow:"0 8px 32px rgba(255,215,0,.3)",opacity:myName.trim()?1:.4}}>{t.createGame}</button>
     <button onClick={()=>setPage("join")} style={{...B,background:"rgba(255,255,255,.1)",color:"#C084FC",fontSize:16,fontWeight:700,padding:"14px 0",borderRadius:14,width:260}}>{t.joinGame}</button>
+    <button onClick={()=>setShowHelp(true)} style={{...B,background:"transparent",color:"rgba(255,255,255,.5)",fontSize:14,fontWeight:600,padding:"12px 0",width:260,marginTop:8}}>❓ {t.howToPlay}</button>
+    {showHelp&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.8)",zIndex:999,display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={()=>setShowHelp(false)}>
+      <div style={{background:"#1a1a3e",borderRadius:20,padding:24,maxWidth:400,width:"100%",maxHeight:"80vh",overflow:"auto",border:"1px solid rgba(255,215,0,.2)"}} onClick={e=>e.stopPropagation()}>
+        <h2 style={{color:"#FFD700",fontSize:22,margin:"0 0 16px",textAlign:"center"}}>{t.howTitle}</h2>
+        <div style={{color:"rgba(255,255,255,.8)",fontSize:14,lineHeight:1.8,whiteSpace:"pre-line"}}>{t.howBody}</div>
+        <button onClick={()=>setShowHelp(false)} style={{...B,width:"100%",background:"linear-gradient(135deg,#C084FC,#818CF8)",color:"#fff",padding:"12px",borderRadius:12,fontSize:16,fontWeight:700,marginTop:20}}>{t.close}</button>
+      </div>
+    </div>}
     <div style={{display:"flex",gap:12,marginTop:24,background:"rgba(255,255,255,.08)",borderRadius:12,padding:6}}>
       {[["en","EN"],["he","עב"]].map(([l,lb])=><button key={l} onClick={()=>setLang(l)} style={{...B,padding:"8px 16px",borderRadius:8,fontSize:14,fontWeight:700,background:lang===l?"rgba(255,215,0,.3)":"transparent",color:lang===l?"#FFD700":"rgba(255,255,255,.5)"}}>{lb}</button>)}
     </div>
