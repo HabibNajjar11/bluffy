@@ -117,108 +117,310 @@ const ICONS={general_knowledge:"🧠",history:"📜",geography:"🌍",flags:"�
 const CATS=Object.keys(ICONS);
 const EMO=["😎","🤩","🥳","😏","🤓"];
 
-// Smart decoy: uses TYPE_DECOYS + detectAnswerType
-function genDecoy(q,existingTexts,ln){
-  const aType=detectAnswerType(q);
-  const bank=TYPE_DECOYS[aType]||TYPE_DECOYS.general;
-  const pool=ln==="he"?bank.he:bank.en;
-  const ne=existingTexts.map(norm);
-  const av=pool.filter(d=>!ne.some(e=>e===norm(d)));
-  if(av.length)return av[Math.floor(Math.random()*av.length)];
-  const fb=ln==="he"?TYPE_DECOYS.general.he:TYPE_DECOYS.general.en;
-  const av2=fb.filter(d=>!ne.some(e=>e===norm(d)));
-  return av2.length?av2[Math.floor(Math.random()*av2.length)]:(ln==="he"?"לא יודע":"Unknown");
+const T={en:{appName:"Bluffy",tagline:"Bluff your way to the win!",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back",howToPlay:"How to Play",howTitle:"How to Play Bluffy",howBody:"1. Create a room and share the code\n2. Each round, one player picks a category\n3. Everyone types their answer\n4. If CORRECT — write a convincing WRONG answer to fool others!\n5. All answers shuffled as multiple choice\n6. Everyone picks what they think is correct\n\nScoring:\n+2 for correct pick\n+1 per player your fake answer fools\n0 if you pick your own fake (self-fool!)\n\nMost points wins!",close:"Close"},
+he:{appName:"Bluffy",tagline:"בלוף את דרכך עד לניצחון!",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה",howToPlay:"איך משחקים",howTitle:"איך משחקים בבלאפי",howBody:"1. צרו חדר ושתפו את הקוד עם חברים\n2. כל סיבוב, שחקן בוחר קטגוריה\n3. כולם מקלידים תשובה\n4. אם נכון — כתבו תשובה שגויה משכנעת!\n5. כל התשובות מעורבבות כרב-ברירה\n6. כולם בוחרים את הנכונה\n\nניקוד:\n+2 על בחירה נכונה\n+1 לכל שחקן שהבלאף שלכם רימה\n0 אם בחרתם בבלאף שלכם!\n\nהכי הרבה נקודות מנצח!",close:"סגור"}};
+
+
+// ═══════════════════════════════════════════════════════════
+// IR MATCHING ENGINE + SMART DISTRACTOR SYSTEM
+// ═══════════════════════════════════════════════════════════
+
+// --- Normalization ---
+function norm(s){
+  if(!s)return"";
+  return s.toLowerCase().trim()
+    .replace(/[\u0591-\u05C7]/g,"") // remove Hebrew niqqud
+    .replace(/[^\w\s\u0590-\u05FF]/g,"") // keep letters, digits, spaces, Hebrew
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"") // remove diacritics
+    .replace(/\s+/g," ").trim();
 }
 
-const T={en:{appName:"Bluffy",tagline:"Bluff your way to the win",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back",howToPlay:"How to Play",howTitle:"How to Play Bluffy",howBody:"1. Create a room and share the code\n2. Each round, one player picks a category\n3. Everyone types their answer\n4. If CORRECT — write a convincing WRONG answer to fool others!\n5. All answers shuffled as multiple choice\n6. Everyone picks what they think is correct\n\nScoring:\n+2 for correct pick\n+1 per player your fake answer fools\n0 if you pick your own fake (self-fool!)\n\nMost points wins!",close:"Close"},
-he:{appName:"Bluffy",tagline:"בלוף את דרכך עד לניצחון",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה",howToPlay:"איך משחקים",howTitle:"איך משחקים בבלאפי",howBody:"1. צרו חדר ושתפו את הקוד עם חברים\n2. כל סיבוב, שחקן בוחר קטגוריה\n3. כולם מקלידים תשובה\n4. אם נכון — כתבו תשובה שגויה משכנעת!\n5. כל התשובות מעורבבות כרב-ברירה\n6. כולם בוחרים את הנכונה\n\nניקוד:\n+2 על בחירה נכונה\n+1 לכל שחקן שהבלאף שלכם רימה\n0 אם בחרתם בבלאף שלכם!\n\nהכי הרבה נקודות מנצח!",close:"סגור"}};
+// Hebrew final-form normalization (ך→כ, ם→מ, ן→נ, ף→פ, ץ→צ)
+function normHe(s){
+  return s.replace(/ך/g,"כ").replace(/ם/g,"מ").replace(/ן/g,"נ").replace(/ף/g,"פ").replace(/ץ/g,"צ");
+}
 
+function deepNorm(s){return normHe(norm(s));}
 
-function norm(s){return s.toLowerCase().trim().replace(/[^\w\s\u0590-\u05FF]/g,"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ");}
-function lev(a,b){const m=a.length,n=b.length,d=Array.from({length:m+1},()=>Array(n+1).fill(0));for(let i=0;i<=m;i++)d[i][0]=i;for(let j=0;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));return d[m][n];}
+// --- Levenshtein ---
+function lev(a,b){
+  const m=a.length,n=b.length;
+  if(m===0)return n; if(n===0)return m;
+  const d=Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=0;i<=m;i++)d[i][0]=i;
+  for(let j=0;j<=n;j++)d[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));
+  return d[m][n];
+}
 
-// Smart IR-like answer matching
-function isCorrect(input,correct){
-  const a=norm(input),b=norm(correct);
-  if(!a||!b)return false;
-  // Exact match
-  if(a===b)return true;
-  // For numbers: must be exact
-  if(/^\d+\.?\d*$/.test(b))return a===b;
-  // For short answers (1-3 chars like Au, H2O): exact only
-  if(b.length<=3)return a===b;
-  // Partial name match: if correct is multi-word, accept any single significant word
-  // e.g. "Neil Armstrong" → accept "armstrong" or "neil"
-  const bWords=b.split(" ").filter(w=>w.length>=3);
-  const aWords=a.split(" ").filter(w=>w.length>=3);
-  if(bWords.length>=2){
-    // Accept if user typed one key word (last name or first name)
-    if(aWords.length===1&&bWords.some(bw=>lev(aWords[0],bw)<=1))return true;
-    // Accept if user typed both words with small typos
-    if(aWords.length>=2){
+// Normalized edit distance [0,1] where 0=identical
+function normLev(a,b){
+  if(!a&&!b)return 0;
+  const maxLen=Math.max(a.length,b.length);
+  return maxLen===0?0:lev(a,b)/maxLen;
+}
+
+// --- Token utilities ---
+function tokenize(s){return deepNorm(s).split(" ").filter(t=>t.length>0);}
+
+function jaccard(a,b){
+  const sa=new Set(tokenize(a)),sb=new Set(tokenize(b));
+  if(sa.size===0&&sb.size===0)return 1;
+  let inter=0;
+  for(const t of sa)if(sb.has(t))inter++;
+  return inter/(sa.size+sb.size-inter);
+}
+
+// Fuzzy token match: does token a match any token in set b within lev threshold?
+function fuzzyTokenMatch(tok,tokens,threshold){
+  return tokens.some(t=>lev(tok,t)<=threshold);
+}
+
+// --- TRANSLITERATION MAP (Hebrew ↔ common English forms) ---
+const TRANSLIT={
+  "מסי":"messi","רונאלדו":"ronaldo","איינשטיין":"einstein","ניוטון":"newton",
+  "שייקספיר":"shakespeare","דה וינצי":"da vinci","לאונרדו":"leonardo",
+  "מוצרט":"mozart","בטהובן":"beethoven","פיקאסו":"picasso",
+  "ואן גוך":"van gogh","דרווין":"darwin","גלילאו":"galileo",
+  "טסלה":"tesla","אדיסון":"edison","פלמינג":"fleming",
+  "קירי":"curie","ארמסטרונג":"armstrong","ניל":"neil",
+  "קלאופטרה":"cleopatra","נפוליאון":"napoleon","צרצ'יל":"churchill",
+  "היטלר":"hitler","סטלין":"stalin","לנין":"lenin",
+  "גנדי":"gandhi","מנדלה":"mandela",
+};
+
+function transliterate(s){
+  const n=deepNorm(s);
+  // Check if Hebrew input matches a known transliteration
+  for(const[he,en] of Object.entries(TRANSLIT)){
+    if(n.includes(he))return en;
+  }
+  // Check reverse
+  for(const[he,en] of Object.entries(TRANSLIT)){
+    if(n.includes(en))return he;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════
+// isCorrect — MAIN MATCHING FUNCTION
+// Score ∈ [0,1], threshold 0.85
+// ═══════════════════════════════════════════════════════════
+function matchScore(input,correct){
+  const a=deepNorm(input),b=deepNorm(correct);
+  if(!a||!b)return 0;
+  if(a===b)return 1.0;
+
+  // --- NUMERIC: must be exact ---
+  if(/^\d+\.?\d*$/.test(b))return a===b?1.0:0.0;
+
+  // --- SHORT (1-3 chars, like Au, H2O): exact or nothing ---
+  if(b.length<=3)return a===b?1.0:0.0;
+
+  // --- Compute components ---
+  const jac=jaccard(input,correct);
+  const nLev=1-normLev(a,b);
+
+  // --- Named entity bonus ---
+  const aToks=tokenize(input),bToks=tokenize(correct);
+  let nameBonus=0;
+
+  if(bToks.length>=2){
+    // Last name match (strongest signal for person names)
+    const bLast=bToks[bToks.length-1];
+    if(aToks.length===1&&lev(aToks[0],bLast)<=1)nameBonus=0.5;
+    // First name match
+    const bFirst=bToks[0];
+    if(aToks.length===1&&lev(aToks[0],bFirst)<=1)nameBonus=Math.max(nameBonus,0.4);
+    // Full name with typos: check each token
+    if(aToks.length>=2){
       let matched=0;
-      for(const aw of aWords){if(bWords.some(bw=>lev(aw,bw)<=1))matched++;}
-      if(matched>=bWords.length)return true;
+      for(const at of aToks){
+        if(bToks.some(bt=>lev(at,bt)<=1))matched++;
+      }
+      if(matched>=bToks.length)nameBonus=0.5;
+      else if(matched>0)nameBonus=0.2*(matched/bToks.length);
     }
   }
-  // Single word: allow small typo
-  if(b.length<=8)return lev(a,b)<=1;
-  return lev(a,b)<=2;
+
+  // --- Transliteration bonus ---
+  let translitBonus=0;
+  const translitA=transliterate(input);
+  const translitB=transliterate(correct);
+  if(translitA&&deepNorm(translitA)===b)translitBonus=0.6;
+  if(translitB&&deepNorm(translitB)===a)translitBonus=0.6;
+  // Also check if transliterated form is close
+  if(translitA&&(1-normLev(deepNorm(translitA),b))>0.8)translitBonus=Math.max(translitBonus,0.4);
+
+  // --- Combine ---
+  // Weighted: edit distance matters most, then Jaccard, then bonuses
+  const score=Math.min(1.0, nLev*0.4 + jac*0.3 + nameBonus*0.2 + translitBonus*0.1
+    + (a===b?1:0)*0.0); // exact already returns 1.0 above
+
+  return score;
 }
 
-// Check if two texts are the same (for grouping)
-function isSameText(a,b){return norm(a)===norm(b);}
+function isCorrect(input,correct){
+  return matchScore(input,correct)>=0.75;
+}
 
-// Title Case: capitalize first letter of each word
+// Check both languages
+function isCorrectBilingual(input,ansEn,ansHe){
+  return isCorrect(input,ansEn)||isCorrect(input,ansHe);
+}
+
+// --- Grouping: are two wrong answers effectively the same? ---
+function isSameText(a,b){
+  const na=deepNorm(a),nb=deepNorm(b);
+  if(na===nb)return true;
+  if(na.length>3&&nb.length>3&&normLev(na,nb)<0.2)return true;
+  return false;
+}
+
+// Title Case for English, passthrough for Hebrew
 function titleCase(s,ln){
   if(!s)return s;
-  // Don't touch Hebrew
   if(ln==="he"||/[\u0590-\u05FF]/.test(s))return s;
   return s.replace(/\w\S*/g,w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase());
 }
 
-// Strict match for bluff rejection
-function strictMatch(i,c){const a=norm(i),b=norm(c);if(!a||!b)return false;return a===b;}
+// Strict match for bluff rejection (only exact normalized match)
+function strictMatch(i,c){return deepNorm(i)===deepNorm(c);}
 
-// Detect answer type for smart decoys
+// ═══════════════════════════════════════════════════════════
+// SMART DISTRACTOR GENERATION
+// ═══════════════════════════════════════════════════════════
+
 function detectAnswerType(q){
-  const aEn=q.answer_en||"";
-  const aHe=q.answer_he||"";
-  if(q.flag_country)return"country";
-  if(/^\d{3,4}$/.test(aEn))return"year";
-  if(/^\d+\.?\d*$/.test(aEn))return"number";
-  if(q.category==="flags")return"country";
-  // Check if it's a person name (contains space, not a place)
-  if(aEn.split(" ").length>=2&&/^[A-Z]/.test(aEn)&&!["Pacific Ocean","Atlantic Ocean","Indian Ocean","Arctic Ocean","South America","North America","Vatican City","New Zealand","Old Trafford","Real Madrid","Mongol Empire","Blue whale","Carbon dioxide"].includes(aEn))return"person";
+  const a=q.answer_en||"";
+  if(q.flag_country||q.category==="flags")return"country";
+  if(/^\d{3,4}$/.test(a))return"year";
+  if(/^\d+\.?\d*$/.test(a))return"number";
   if(q.category==="famous")return"person";
-  // Country names
-  if(["geography","flags"].includes(q.category)&&!aEn.match(/^\d/))return"country";
+  // Multi-word starting with uppercase → likely person
+  const words=a.split(" ");
+  if(words.length>=2&&/^[A-Z]/.test(a)){
+    const nonPlace=!["Ocean","Sea","Empire","City","America","Zealand","Trafford","Madrid","whale","dioxide","Republic"].some(w=>a.includes(w));
+    if(nonPlace)return"person";
+  }
+  if(["geography"].includes(q.category)&&!/^\d/.test(a))return"country";
+  if(q.category==="football")return"football";
+  if(q.category==="movies"||q.category==="cartoons")return"entertainment";
+  if(q.category==="fashion")return"fashion";
+  if(q.category==="science")return"science_term";
   return"general";
 }
 
-// Smart decoy bank by answer type
-const TYPE_DECOYS={
-  person:{
-    en:["Alexander Hamilton","Marco Polo","Nikola Tesla","Thomas Edison","Charles Darwin","Galileo Galilei","Wolfgang Mozart","Pablo Picasso","Vincent Van Gogh","Isaac Newton","Benjamin Franklin","Napoleon Bonaparte","Aristotle","Plato","Sigmund Freud","Henry Ford","James Watt","Louis Pasteur","Copernicus","Archimedes","Jules Verne","Mark Twain","Oscar Wilde","Frida Kahlo"],
-    he:["אלכסנדר המילטון","מרקו פולו","ניקולה טסלה","תומאס אדיסון","צ'רלס דרווין","גלילאו גלילאי","וולפגנג מוצרט","פבלו פיקאסו","וינסנט ואן גוך","אייזק ניוטון","בנג'מין פרנקלין","נפוליאון בונפרטה","אריסטו","אפלטון","זיגמונד פרויד","הנרי פורד","לואי פסטר","קופרניקוס","ארכימדס","ז'ול ורן","מארק טוויין","אוסקר ויילד","פרידה קאלו"]
-  },
-  year:{
-    en:["1066","1215","1453","1492","1588","1776","1789","1815","1848","1865","1903","1914","1929","1939","1945","1961","1969","1989","2001","2008"],
-    he:["1066","1215","1453","1492","1588","1776","1789","1815","1848","1865","1903","1914","1929","1939","1945","1961","1969","1989","2001","2008"]
-  },
-  number:{
-    en:["2","3","4","5","6","7","8","9","10","11","12","13","15","17","20","24","27","32","42","48","52","64","88","100","150","200","206","365","1000"],
-    he:["2","3","4","5","6","7","8","9","10","11","12","13","15","17","20","24","27","32","42","48","52","64","88","100","150","200","206","365","1000"]
-  },
-  country:{
-    en:["Sweden","Norway","Denmark","Poland","Hungary","Austria","Belgium","Netherlands","Portugal","Ireland","Iceland","Greece","Switzerland","Finland","Estonia","Latvia","Lithuania","Croatia","Serbia","Bulgaria","Morocco","Algeria","Tunisia","Libya","Chile","Peru","Bolivia","Ecuador","Venezuela","Cuba","Jamaica","Panama","Costa Rica","Guatemala","Philippines","Vietnam","Malaysia","Thailand","Cambodia","Myanmar","Sri Lanka","Nepal","Bangladesh","Pakistan","Kazakhstan","Uzbekistan","Qatar","Bahrain","Kuwait","Oman","Jordan","Lebanon"],
-    he:["שוודיה","נורבגיה","דנמרק","פולין","הונגריה","אוסטריה","בלגיה","הולנד","פורטוגל","אירלנד","איסלנד","יוון","שוויץ","פינלנד","אסטוניה","לטביה","ליטא","קרואטיה","סרביה","בולגריה","מרוקו","אלג'יריה","תוניסיה","לוב","צ'ילה","פרו","בוליביה","אקוודור","ונצואלה","קובה","ג'מייקה","פנמה","קוסטה ריקה","גואטמלה","הפיליפינים","וייטנאם","מלזיה","תאילנד","קמבודיה","מיאנמר","סרי לנקה","נפאל","בנגלדש","פקיסטן","קזחסטן","אוזבקיסטן","קטאר","בחריין","כווית","עומאן","ירדן","לבנון"]
-  },
-  general:{
-    en:["Mercury","Venus","Jupiter","Saturn","Oxygen","Helium","Silver","Gold","Platinum","Copper","Iron","Diamond","Granite","Marble","Cotton","Silk","Wool","Leather","Bamboo","Coral","Ivory","Bronze","Titanium","Emerald","Ruby","Sapphire"],
-    he:["כוכב חמה","נוגה","צדק","שבתאי","חמצן","הליום","כסף","זהב","פלטינה","נחושת","ברזל","יהלום","גרניט","שיש","כותנה","משי","צמר","עור","במבוק","אלמוג","שנהב","ארד","טיטניום","אזמרגד","אודם","ספיר"]
+// Near-miss generators by type
+function genSmartDistractors(q,existingTexts,ln,count){
+  const results=[];
+  const used=new Set(existingTexts.map(deepNorm));
+  const aType=detectAnswerType(q);
+  const aEn=q.answer_en||"";
+  const aHe=q.answer_he||"";
+  const ca=ln==="he"?aHe:aEn;
+
+  function addIfNew(text){
+    const t=titleCase(text,ln);
+    const n=deepNorm(t);
+    if(n&&!used.has(n)&&!isCorrect(t,aEn)&&!isCorrect(t,aHe)){
+      used.add(n);results.push(t);return true;
+    }
+    return false;
   }
-};
+
+  // Strategy 1: Near-miss based on type
+  if(aType==="year"){
+    const yr=parseInt(aEn);
+    if(!isNaN(yr)){
+      // Off-by-1, off-by-2, common confusions
+      const offsets=[-3,-2,-1,1,2,3,-5,5,-10,10,-20,20];
+      const shuffled=offsets.sort(()=>Math.random()-0.5);
+      for(const off of shuffled){
+        if(results.length>=count)break;
+        const candidate=String(yr+off);
+        addIfNew(candidate);
+      }
+    }
+  }
+
+  if(aType==="number"){
+    const num=parseFloat(aEn);
+    if(!isNaN(num)){
+      const nearby=[num-1,num+1,num-2,num+2,num*2,Math.round(num/2),num+10,num-10,num+5,num-5].filter(n=>n>0);
+      for(const n of nearby.sort(()=>Math.random()-0.5)){
+        if(results.length>=count)break;
+        addIfNew(String(n%1===0?n:n.toFixed(1)));
+      }
+    }
+  }
+
+  // Strategy 2: Category-specific banks
+  const BANKS={
+    person:{
+      en:["Alexander Hamilton","Marco Polo","Nikola Tesla","Thomas Edison","Charles Darwin","Galileo Galilei","Wolfgang Mozart","Pablo Picasso","Vincent Van Gogh","Isaac Newton","Benjamin Franklin","Napoleon Bonaparte","Aristotle","Plato","Sigmund Freud","Henry Ford","James Watt","Louis Pasteur","Copernicus","Archimedes","Jules Verne","Mark Twain","Oscar Wilde","Frida Kahlo","Leonardo DiCaprio","Albert Schweitzer","Marie Antoinette","Cleopatra","Alexander The Great","Genghis Khan","Socrates","Confucius","Sun Tzu","Machiavelli","Che Guevara"],
+      he:["אלכסנדר המילטון","מרקו פולו","ניקולה טסלה","תומאס אדיסון","צ'רלס דרווין","גלילאו גלילאי","וולפגנג מוצרט","פבלו פיקאסו","וינסנט ואן גוך","אייזק ניוטון","בנג'מין פרנקלין","נפוליאון בונפרטה","אריסטו","אפלטון","זיגמונד פרויד","הנרי פורד","לואי פסטר","קופרניקוס","ארכימדס","ז'ול ורן","מארק טוויין","פרידה קאלו","לאונרדו דיקפריו","מארי אנטואנט","קלאופטרה","אלכסנדר הגדול","ג'ינגיס חאן","סוקרטס","קונפוציוס","סון צו","מקיאוולי","צ'ה גוורה"]
+    },
+    country:{
+      en:["Sweden","Norway","Denmark","Poland","Hungary","Austria","Belgium","Netherlands","Portugal","Ireland","Iceland","Greece","Switzerland","Finland","Estonia","Latvia","Lithuania","Croatia","Serbia","Bulgaria","Morocco","Algeria","Tunisia","Chile","Peru","Bolivia","Ecuador","Venezuela","Cuba","Panama","Philippines","Vietnam","Malaysia","Thailand","Cambodia","Sri Lanka","Nepal","Bangladesh","Pakistan","Kazakhstan","Qatar","Kuwait","Oman","Jordan","Lebanon","Georgia","Armenia","Azerbaijan","Mongolia","Paraguay","Uruguay"],
+      he:["שוודיה","נורבגיה","דנמרק","פולין","הונגריה","אוסטריה","בלגיה","הולנד","פורטוגל","אירלנד","איסלנד","יוון","שוויץ","פינלנד","אסטוניה","לטביה","ליטא","קרואטיה","סרביה","בולגריה","מרוקו","אלג'יריה","תוניסיה","צ'ילה","פרו","בוליביה","אקוודור","ונצואלה","קובה","פנמה","הפיליפינים","וייטנאם","מלזיה","תאילנד","קמבודיה","סרי לנקה","נפאל","בנגלדש","פקיסטן","קזחסטן","קטאר","כווית","עומאן","ירדן","לבנון","גאורגיה","ארמניה","אזרבייג'ן","מונגוליה","פרגוואי","אורוגוואי"]
+    },
+    football:{
+      en:["Barcelona","Liverpool","Bayern Munich","Juventus","AC Milan","Ajax","Porto","Benfica","Chelsea","Arsenal","PSG","Borussia Dortmund","Inter Milan","Atletico Madrid","Manchester City","Tottenham","Napoli","Roma","Lazio","Sevilla","Valencia","Lyon","Marseille","Celtic","Rangers"],
+      he:["ברצלונה","ליברפול","באיירן מינכן","יובנטוס","מילאן","אייאקס","פורטו","בנפיקה","צ'לסי","ארסנל","פ.ס.ז'","דורטמונד","אינטר מילאן","אטלטיקו מדריד","מנצ'סטר סיטי","טוטנהאם","נאפולי","רומא","לאציו","סביליה","ולנסיה","ליון","מרסיי","סלטיק"]
+    },
+    entertainment:{
+      en:["Tom Hanks","Brad Pitt","Meryl Streep","Leonardo DiCaprio","Scarlett Johansson","Morgan Freeman","Robert De Niro","Al Pacino","Johnny Depp","Denzel Washington","Hogwarts","Gotham","Metropolis","Wakanda","Narnia","Mordor","Pandora","Neverland","Asgard"],
+      he:["טום הנקס","בראד פיט","מריל סטריפ","לאונרדו דיקפריו","סקרלט ג'והנסון","מורגן פרימן","רוברט דה נירו","אל פצ'ינו","ג'וני דפ","דנזל וושינגטון","הוגוורטס","גותהם","מטרופוליס","וואקנדה","נרניה","מורדור","פנדורה","אסגארד"]
+    },
+    fashion:{
+      en:["Gucci","Prada","Versace","Armani","Dior","Louis Vuitton","Burberry","Balenciaga","Hermes","Fendi","Valentino","Givenchy","YSL","Zara","Dolce & Gabbana","Calvin Klein","Ralph Lauren","Tommy Hilfiger","Hugo Boss","Lacoste"],
+      he:["גוצ'י","פראדה","ורסאצ'ה","ארמני","דיור","לואי ויטון","ברברי","בלנסיאגה","הרמס","פנדי","ולנטינו","ז'יבנשי","זארה","דולצ'ה וגבאנה","קלווין קליין","ראלף לורן","טומי הילפיגר","הוגו בוס","לקוסט"]
+    },
+    science_term:{
+      en:["Hydrogen","Helium","Carbon","Iron","Oxygen","Sodium","Calcium","Mercury","Uranium","Lithium","Platinum","Copper","Zinc","Lead","Neon","Argon","Tungsten","Nitrogen","Phosphorus","Sulfur","Chlorine","Potassium","Magnesium","Silicon"],
+      he:["מימן","הליום","פחמן","ברזל","חמצן","נתרן","סידן","כספית","אורניום","ליתיום","פלטינה","נחושת","אבץ","עופרת","ניאון","ארגון","טונגסטן","חנקן","זרחן","גופרית","כלור","אשלגן","מגנזיום","סיליקון"]
+    },
+    general:{
+      en:["Mercury","Venus","Jupiter","Saturn","Mars","Neptune","Uranus","Pluto","Diamond","Gold","Silver","Bronze","Iron","Copper","Cotton","Silk","Wool","Leather","Gravity","Magnetism","Friction","Inertia","Momentum","Velocity"],
+      he:["כוכב חמה","נוגה","צדק","שבתאי","מאדים","נפטון","אורנוס","פלוטו","יהלום","זהב","כסף","ארד","ברזל","נחושת","כותנה","משי","צמר","עור","כוח הכבידה","מגנטיות","חיכוך","אינרציה","מומנטום"]
+    }
+  };
+
+  // Pick from appropriate bank, shuffled
+  const bankKey=BANKS[aType]?aType:"general";
+  const pool=ln==="he"?BANKS[bankKey].he:BANKS[bankKey].en;
+  const shuffled=[...pool].sort(()=>Math.random()-0.5);
+
+  for(const candidate of shuffled){
+    if(results.length>=count)break;
+    addIfNew(candidate);
+  }
+
+  // Fallback: try general bank if still short
+  if(results.length<count&&bankKey!=="general"){
+    const fallback=ln==="he"?BANKS.general.he:BANKS.general.en;
+    for(const candidate of fallback.sort(()=>Math.random()-0.5)){
+      if(results.length>=count)break;
+      addIfNew(candidate);
+    }
+  }
+
+  return results;
+}
+
+// Main entry: generate N distractors
+function genDecoy(q,existingTexts,ln){
+  const results=genSmartDistractors(q,existingTexts,ln,1);
+  return results.length>0?results[0]:(ln==="he"?"לא יודע":"Unknown");
+}
+
+function genMultipleDecoys(q,existingTexts,ln,count){
+  return genSmartDistractors(q,existingTexts,ln,count);
+}
+
+
 function genCode(){let r="";for(let i=0;i<6;i++)r+=Math.floor(Math.random()*10);if(r[0]==="0")r="1"+r.slice(1);return r;}
 function genUid(){return"u"+Math.random().toString(36).slice(2,10)+Date.now().toString(36);}
 
@@ -349,7 +551,7 @@ export default function Bluffy(){
     if(!ci.trim()||!room||!rd?.question)return;
     const q=rd.question;const ln=rd.lang||lang;
     const text=titleCase(ci.trim(),ln);
-    const ok=isCorrect(ci,q.answer_en)||isCorrect(ci,q.answer_he);
+    const ok=isCorrectBilingual(ci,q.answer_en,q.answer_he);
     update(ref(db,`rooms/${room}/answers/${uid}`),{text,ok});
     if(!ok)set(ref(db,`rooms/${room}/publicAnswers/${uid}`),text);
     setCi("");
@@ -358,7 +560,7 @@ export default function Bluffy(){
   const submitBluff=()=>{
     if(!bi.trim()||!room||!rd?.question)return;
     const q=rd.question;const ln=rd.lang||lang;
-    if(strictMatch(bi,q.answer_en)||strictMatch(bi,q.answer_he))return;
+    if(strictMatch(bi,q.answer_en)||strictMatch(bi,q.answer_he)||isCorrectBilingual(bi,q.answer_en,q.answer_he))return;
     const text=titleCase(bi.trim(),ln);
     set(ref(db,`rooms/${room}/publicAnswers/${uid}`),text);setBi("");
   };
@@ -395,7 +597,7 @@ export default function Bluffy(){
     Object.entries(rd.publicAnswers||{}).forEach(([id,txt])=>{
       if(txt==="—")return;
       // Only filter if it's ACTUALLY the correct answer
-      if(isCorrect(txt,q.answer_en)||isCorrect(txt,q.answer_he))return;
+      if(isCorrectBilingual(txt,q.answer_en,q.answer_he))return;
       
       // Check if this answer already exists in a group
       const existing=groups.find(g=>isSameText(g.displayText,txt));
@@ -421,19 +623,17 @@ export default function Bluffy(){
       usedTexts.add(norm(g.displayText));
     });
     
-    // Step 3: Fill with decoys to reach target count
+    // Step 3: Fill with smart decoys to reach target count
     // Target = playerCount + 1, minimum 4
     const target=Math.max(4,playerCount+1);
-    let attempts=0;
-    while(os.length<target&&attempts<50){
+    const needed=target-os.length;
+    if(needed>0){
       const allTexts=os.map(o=>o.text);
-      const d=genDecoy(q,allTexts,ln);
-      const nd=norm(d);
-      if(!usedTexts.has(nd)){
-        os.push({text:titleCase(d,ln),ok:false,ai:["sys"],an:[]});
-        usedTexts.add(nd);
+      const decoys=genMultipleDecoys(q,allTexts,ln,needed);
+      for(const d of decoys){
+        os.push({text:d,ok:false,ai:["sys"],an:[]});
+        usedTexts.add(deepNorm(d));
       }
-      attempts++;
     }
     
     // Step 4: Shuffle all options
@@ -639,7 +839,7 @@ export default function Bluffy(){
       <div style={{fontSize:48,marginBottom:8}}>🎭</div>
       <p style={{color:"#fff",fontSize:16,lineHeight:1.5,margin:"0 0 12px"}}>{t.bluffMsg}</p>
       <input value={bi} onChange={e=>setBi(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submitBluff()} placeholder={t.typeBluff} style={{...I,width:"100%",textAlign:"center",fontSize:18,marginBottom:4}} autoFocus/>
-      {bi.trim()&&rd?.question&&(strictMatch(bi,rd.question.answer_en)||strictMatch(bi,rd.question.answer_he))&&<p style={{color:"#f87171",fontSize:12,margin:"4px 0 8px"}}>{he?"אי אפשר לשלוח את התשובה הנכונה!":"Can't submit the correct answer!"}</p>}
+      {bi.trim()&&rd?.question&&(strictMatch(bi,rd.question.answer_en)||strictMatch(bi,rd.question.answer_he)||isCorrectBilingual(bi,rd.question.answer_en,rd.question.answer_he))&&<p style={{color:"#f87171",fontSize:12,margin:"4px 0 8px"}}>{he?"אי אפשר לשלוח את התשובה הנכונה!":"Can't submit the correct answer!"}</p>}
       <div style={{display:"flex",gap:8,justifyContent:"center",marginTop:8}}>
         <button onClick={submitBluff} disabled={!bi.trim()} style={{...B,background:bi.trim()?"linear-gradient(135deg,#FFD700,#FFA500)":"#333",color:"#1a1a2e",padding:"12px 28px",borderRadius:12,fontSize:16,fontWeight:700,opacity:bi.trim()?1:.4}}>{t.sendBluff}</button>
         <button onClick={skipBluff} style={{...B,background:"rgba(255,255,255,.1)",color:"rgba(255,255,255,.6)",padding:"12px 20px",borderRadius:12,fontSize:14}}>{t.skip}</button>
