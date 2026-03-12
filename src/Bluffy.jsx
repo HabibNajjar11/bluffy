@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { db } from "./firebase";
 import { ref, set, get, onValue, off, update, remove } from "firebase/database";
 import QRCode from "react-qr-code";
@@ -378,7 +378,12 @@ export default function Bluffy(){
   const[copied,setCopied]=useState(false);
   const[showHelp,setShowHelp]=useState(false);
   const[timer,setTimer]=useState(0);
+  const[revealTimer,setRevealTimer]=useState(0);
+  const[catTimer,setCatTimer]=useState(0);
   const timerRef=useRef(null);
+  const revealTimerRef=useRef(null);
+  const catTimerRef=useRef(null);
+  const selectedRef=useRef(false);
 
   const t=T[lang];const he=lang==="he";
   const isHost=rd?.host===uid;
@@ -391,6 +396,7 @@ export default function Bluffy(){
   const allPubCount=rd?.publicAnswers?Object.keys(rd.publicAnswers).length:0;
   const allSelCount=rd?.selections?Object.keys(rd.selections).length:0;
   const selected=rd?.selections?.[uid]!==undefined;
+  selectedRef.current=selected;
   const baseUrl=typeof window!=="undefined"?window.location.origin+window.location.pathname:"";
   const joinUrl=room?`${baseUrl}?room=${room}`:"";
   const state=rd?.state||""; // lobby, catSel, answering, reveal, post, over
@@ -422,6 +428,46 @@ export default function Bluffy(){
       return()=>clearInterval(timerRef.current);
     }
   },[state,rd?.deadline]);
+
+  // ═══ REVEAL TIMER ═══
+  useEffect(()=>{
+    if(state==="reveal"&&rd?.revealDeadline){
+      const tick=()=>{
+        const left=Math.max(0,Math.ceil((rd.revealDeadline-Date.now())/1000));
+        setRevealTimer(left);
+        if(left<=0){
+          clearInterval(revealTimerRef.current);
+          // Auto-submit no-answer for THIS player only if they haven't selected
+          if(!selectedRef.current){
+            set(ref(db,`rooms/${room}/selections/${uid}`),-1);
+          }
+        }
+      };
+      tick();revealTimerRef.current=setInterval(tick,1000);
+      return()=>clearInterval(revealTimerRef.current);
+    }
+  },[state,rd?.revealDeadline]);
+
+  // ═══ CATEGORY SELECTION TIMER ═══
+  useEffect(()=>{
+    if(state==="catSel"&&rd?.catDeadline){
+      const tick=()=>{
+        const left=Math.max(0,Math.ceil((rd.catDeadline-Date.now())/1000));
+        setCatTimer(left);
+        if(left<=0){
+          clearInterval(catTimerRef.current);
+          // Host auto-picks random category
+          if(isHost){
+            const cats=rd?.settings?.cats||CATS;
+            const randomCat=cats[Math.floor(Math.random()*cats.length)];
+            selectCategory(randomCat);
+          }
+        }
+      };
+      tick();catTimerRef.current=setInterval(tick,1000);
+      return()=>clearInterval(catTimerRef.current);
+    }
+  },[state,rd?.catDeadline]);
 
   // ═══ AUTO-PROGRESS ═══
   useEffect(()=>{
@@ -471,6 +517,7 @@ export default function Bluffy(){
     const u={};playerList.forEach(([id])=>{u[`players/${id}/score`]=0;});
     u.state="catSel";u.round=1;u.turnIdx=0;u.usedIds="";
     u.question=null;u.answers=null;u.publicAnswers=null;u.selections=null;u.options=null;u.results=null;u.correctAnswer=null;
+    u.catDeadline=Date.now()+(rd?.settings?.time||30)*1000;
     update(ref(db,`rooms/${room}`),u);
   };
 
@@ -614,7 +661,8 @@ update(ref(db,`rooms/${room}`),{
   state:"reveal",
   options:os,
   correctAnswer:ca,
-  selections:null
+  selections:null,
+  revealDeadline:Date.now()+(rd?.settings?.time||30)*1000
 });
   };
 
@@ -668,7 +716,7 @@ update(ref(db,`rooms/${room}`),{
   const nextRound=()=>{
     if(!isHost)return;
     if((rd?.round||1)>=(rd?.settings?.rounds||10)){update(ref(db,`rooms/${room}`),{state:"over"});return;}
-    update(ref(db,`rooms/${room}`),{state:"catSel",round:(rd?.round||1)+1,turnIdx:((rd?.turnIdx||0)+1)%playerCount,question:null,answers:null,publicAnswers:null,selections:null,options:null,results:null,correctAnswer:null});
+    update(ref(db,`rooms/${room}`),{state:"catSel",round:(rd?.round||1)+1,turnIdx:((rd?.turnIdx||0)+1)%playerCount,question:null,answers:null,publicAnswers:null,selections:null,options:null,results:null,correctAnswer:null,catDeadline:Date.now()+(rd?.settings?.time||30)*1000});
   };
 
   const playAgain=()=>{if(!isHost)return;const u={};playerList.forEach(([id])=>{u[`players/${id}/score`]=0;});u.state="lobby";u.round=0;update(ref(db,`rooms/${room}`),u);};
@@ -784,7 +832,12 @@ update(ref(db,`rooms/${room}`),{
   if(state==="catSel"){const turnUid=playerList[rd?.turnIdx||0]?.[0];const isMyTurn=turnUid===uid;const turnName=rd?.players?.[turnUid]?.name||"?";
   const cats=rd?.settings?.cats||CATS;
   return(<div style={{minHeight:"100vh",background:bg,padding:20,direction:he?"rtl":"ltr"}}><div style={{maxWidth:500,margin:"0 auto"}}>
-    <TopBar/><RB/><div style={{textAlign:"center"}}><span style={{fontSize:40}}>👆</span>
+    <TopBar/><RB/>
+    {rd?.catDeadline&&<div style={{textAlign:"center",marginBottom:12}}>
+      <span style={{color:catTimer<=5?"#f87171":"#FFD700",fontSize:32,fontWeight:900}}>{catTimer}</span>
+      <span style={{color:"rgba(255,255,255,.4)",fontSize:12,marginInlineStart:8}}>{t.timerLabel}</span>
+    </div>}
+    <div style={{textAlign:"center"}}><span style={{fontSize:40}}>👆</span>
     <p style={{color:"#FFD700",fontSize:20,fontWeight:700,margin:"8px 0"}}>{turnName}{t.turn}</p></div>
     {isMyTurn?<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginTop:16}}>
       {cats.slice(0,8).map(c=><button key={c} onClick={()=>selectCategory(c)} style={{background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.1)",borderRadius:16,padding:"20px 10px",display:"flex",flexDirection:"column",alignItems:"center",gap:6,...B}}>
@@ -830,6 +883,10 @@ update(ref(db,`rooms/${room}`),{
   // ════════ REVEAL ════════
   if(state==="reveal"&&rd?.options)return(<div style={{minHeight:"100vh",background:bg,padding:20,direction:he?"rtl":"ltr"}}><div style={{maxWidth:500,margin:"0 auto"}}>
     <TopBar/><RB/>
+    {rd?.revealDeadline&&<div style={{textAlign:"center",marginBottom:12}}>
+      <span style={{color:revealTimer<=5?"#f87171":"#FFD700",fontSize:32,fontWeight:900}}>{revealTimer}</span>
+      <span style={{color:"rgba(255,255,255,.4)",fontSize:12,marginInlineStart:8}}>{t.timerLabel}</span>
+    </div>}
     <div style={{...C,marginBottom:16,textAlign:"center",borderColor:"rgba(255,215,0,.2)"}}>
       {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code}/>}
       <p style={{color:"#fff",fontSize:18,fontWeight:700,margin:0}}>{QT()}</p>
