@@ -261,8 +261,58 @@ function matchScore(input,correct){
   return score;
 }
 
-function isCorrect(input,correct){
-  return matchScore(input,correct)>=0.65;
+function isCorrect(input, correct) {
+  if (!input || !correct) return false;
+
+  const a = deepNorm(input);
+  const b = deepNorm(correct);
+
+  if (!a || !b) return false;
+
+  // Exact match
+  if (a === b) return true;
+
+  // Strict numeric
+  if (/^\d+(\.\d+)?$/.test(b)) return a === b;
+
+  const aTokens = tokenize(a);
+  const bTokens = tokenize(b);
+
+  // 🔥 1. Single word answers (color, short word etc.)
+  if (bTokens.length === 1) {
+    const dist = lev(a, b);
+    const ratio = dist / Math.max(a.length, b.length);
+
+    // allow up to 30% typo error
+    if (ratio <= 0.3) return true;
+  }
+
+  // 🔥 2. Multi-word answers (names etc.)
+  if (bTokens.length >= 2) {
+    // Allow first OR last name
+    const first = bTokens[0];
+    const last = bTokens[bTokens.length - 1];
+
+    if (aTokens.length === 1) {
+      if (lev(aTokens[0], first) <= 2) return true;
+      if (lev(aTokens[0], last) <= 2) return true;
+    }
+
+    // Allow mixed order (lionel messi / messi lionel)
+    let matched = 0;
+    for (const at of aTokens) {
+      if (bTokens.some(bt => lev(at, bt) <= 2)) matched++;
+    }
+    if (matched >= 1) return true;
+  }
+
+  // 🔥 3. Global fuzzy fallback (very smart mode)
+  const dist = lev(a, b);
+  const ratio = dist / Math.max(a.length, b.length);
+
+  if (ratio <= 0.25) return true;
+
+  return false;
 }
 
 // Check both languages
