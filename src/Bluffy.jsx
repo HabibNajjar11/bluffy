@@ -262,7 +262,7 @@ function matchScore(input,correct){
 }
 
 function isCorrect(input,correct){
-  return matchScore(input,correct)>=0.75;
+  return matchScore(input,correct)>=0.65;
 }
 
 // Check both languages
