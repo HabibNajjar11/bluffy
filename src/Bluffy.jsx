@@ -7,118 +7,15 @@ import QRCode from "react-qr-code";
 const FC={"Japan":"jp","France":"fr","South Korea":"kr","Mexico":"mx","Thailand":"th","Colombia":"co","Romania":"ro","Ivory Coast":"ci","Brazil":"br","Germany":"de","Italy":"it","Canada":"ca","Australia":"au","India":"in","China":"cn","Russia":"ru","United States":"us","United Kingdom":"gb","Spain":"es","Turkey":"tr","Egypt":"eg","Argentina":"ar","Sweden":"se","Norway":"no","Denmark":"dk","Poland":"pl","Hungary":"hu","Austria":"at","Belgium":"be","Netherlands":"nl","Portugal":"pt","Ireland":"ie","Iceland":"is","Greece":"gr","Switzerland":"ch","Finland":"fi","Czech Republic":"cz","Croatia":"hr","Ukraine":"ua","Israel":"il","Saudi Arabia":"sa","Nigeria":"ng","South Africa":"za","Kenya":"ke","Morocco":"ma","Nepal":"np","Mongolia":"mn","Chad":"td","Cuba":"cu","Peru":"pe","Chile":"cl","Jamaica":"jm","Ghana":"gh","Tanzania":"tz","New Zealand":"nz","Singapore":"sg","Malaysia":"my","Indonesia":"id","Philippines":"ph","Vietnam":"vn","Pakistan":"pk","Bangladesh":"bd","Iran":"ir","Jordan":"jo","Qatar":"qa","Kuwait":"kw","Bahrain":"bh","Oman":"om","Lebanon":"lb","Estonia":"ee","Latvia":"lv","Lithuania":"lt","Slovenia":"si","Slovakia":"sk","Albania":"al","Georgia":"ge","Kazakhstan":"kz","Costa Rica":"cr","Panama":"pa","Paraguay":"py","Uruguay":"uy","Bolivia":"bo","Ecuador":"ec","Venezuela":"ve","Haiti":"ht","Dominican Republic":"do","Trinidad and Tobago":"tt"};
 const flagUrl=(c)=>{const x=FC[c];return x?`https://flagcdn.com/w160/${x}.png`:null;};
 
-// ═══ QUESTIONS ═══
-const QS=[
-{id:"gk1",category:"general_knowledge",difficulty:"Easy",question_en:"The number of continents is ___",question_he:"מספר היבשות הוא ___",answer_en:"7",answer_he:"7"},
-{id:"gk2",category:"general_knowledge",difficulty:"Easy",question_en:"The chemical symbol for water is ___",question_he:"הסימן הכימי של מים הוא ___",answer_en:"H2O",answer_he:"H2O"},
-{id:"gk3",category:"general_knowledge",difficulty:"Medium",question_en:"A standard piano has ___ keys",question_he:"בפסנתר רגיל יש ___ קלידים",answer_en:"88",answer_he:"88"},
-{id:"gk4",category:"general_knowledge",difficulty:"Hard",question_en:"The smallest country by area is ___",question_he:"המדינה הקטנה ביותר לפי שטח היא ___",answer_en:"Vatican City",answer_he:"הוותיקן"},
-{id:"gk5",category:"general_knowledge",difficulty:"Very Hard",question_en:"The first email was sent in ___",question_he:"האימייל הראשון נשלח בשנת ___",answer_en:"1971",answer_he:"1971"},
-{id:"gk6",category:"general_knowledge",difficulty:"Impossible",question_en:"The most common blood type is ___",question_he:"סוג הדם הנפוץ ביותר הוא ___",answer_en:"O positive",answer_he:"O חיובי"},
-{id:"gk7",category:"general_knowledge",difficulty:"Medium",question_en:"Plants absorb ___ from the atmosphere",question_he:"צמחים סופגים ___ מהאטמוספירה",answer_en:"Carbon dioxide",answer_he:"פחמן דו חמצני"},
-{id:"gk8",category:"general_knowledge",difficulty:"Hard",question_en:"The hardest natural substance is ___",question_he:"החומר הטבעי הקשה ביותר הוא ___",answer_en:"Diamond",answer_he:"יהלום"},
-{id:"gk9",category:"general_knowledge",difficulty:"Easy",question_en:"Water boils at ___ degrees Celsius",question_he:"מים רותחים ב-___ מעלות צלזיוס",answer_en:"100",answer_he:"100"},
-{id:"gk10",category:"general_knowledge",difficulty:"Easy",question_en:"The largest animal on Earth is the ___",question_he:"החיה הגדולה ביותר היא ___",answer_en:"Blue whale",answer_he:"לוויתן כחול"},
-{id:"gk11",category:"general_knowledge",difficulty:"Medium",question_en:"An adult human has ___ teeth",question_he:"לאדם בוגר יש ___ שיניים",answer_en:"32",answer_he:"32"},
-{id:"gk12",category:"general_knowledge",difficulty:"Hard",question_en:"Russia spans ___ time zones",question_he:"רוסיה משתרעת על ___ אזורי זמן",answer_en:"11",answer_he:"11"},
-{id:"his1",category:"history",difficulty:"Easy",question_en:"World War II ended in ___",question_he:"מלחמת העולם השנייה הסתיימה בשנת ___",answer_en:"1945",answer_he:"1945"},
-{id:"his2",category:"history",difficulty:"Medium",question_en:"The first moonwalker was ___ (full name)",question_he:"האדם הראשון על הירח היה ___ (שם מלא)",answer_en:"Neil Armstrong",answer_he:"ניל ארמסטרונג"},
-{id:"his3",category:"history",difficulty:"Hard",question_en:"The ancient wonder in Alexandria was the ___",question_he:"פלא העולם העתיק באלכסנדריה היה ___",answer_en:"Lighthouse of Alexandria",answer_he:"המגדלור של אלכסנדריה"},
-{id:"his4",category:"history",difficulty:"Very Hard",question_en:"The Magna Carta was signed in ___",question_he:"המגנא כרטא נחתמה בשנת ___",answer_en:"1215",answer_he:"1215"},
-{id:"his5",category:"history",difficulty:"Impossible",question_en:"The last pharaoh was ___ (first name)",question_he:"הפרעון/ית האחרון/ה היה/תה ___",answer_en:"Cleopatra",answer_he:"קלאופטרה"},
-{id:"his6",category:"history",difficulty:"Easy",question_en:"The Great Wall was built by ___",question_he:"החומה הגדולה נבנתה ע\"י ___",answer_en:"China",answer_he:"סין"},
-{id:"his7",category:"history",difficulty:"Medium",question_en:"The ship that sank in 1912 was the ___",question_he:"האונייה שטבעה ב-1912 הייתה ___",answer_en:"Titanic",answer_he:"טיטאניק"},
-{id:"his8",category:"history",difficulty:"Hard",question_en:"Genghis Khan ruled the ___",question_he:"ג'ינגיס חאן שלט ב___",answer_en:"Mongol Empire",answer_he:"האימפריה המונגולית"},
-{id:"geo1",category:"geography",difficulty:"Easy",question_en:"The largest ocean is the ___",question_he:"האוקיינוס הגדול ביותר הוא ___",answer_en:"Pacific Ocean",answer_he:"האוקיינוס השקט"},
-{id:"geo2",category:"geography",difficulty:"Medium",question_en:"The longest river is the ___",question_he:"הנהר הארוך ביותר הוא ___",answer_en:"Nile",answer_he:"הנילוס"},
-{id:"geo3",category:"geography",difficulty:"Hard",question_en:"The capital of Mongolia is ___",question_he:"בירת מונגוליה היא ___",answer_en:"Ulaanbaatar",answer_he:"אולן בטור"},
-{id:"geo4",category:"geography",difficulty:"Very Hard",question_en:"The country with most lakes is ___",question_he:"המדינה עם הכי הרבה אגמים היא ___",answer_en:"Canada",answer_he:"קנדה"},
-{id:"geo5",category:"geography",difficulty:"Impossible",question_en:"The driest inhabited continent is ___",question_he:"היבשת המיושבת היבשה ביותר היא ___",answer_en:"Australia",answer_he:"אוסטרליה"},
-{id:"geo6",category:"geography",difficulty:"Easy",question_en:"Brazil is on the continent of ___",question_he:"ברזיל ביבשת ___",answer_en:"South America",answer_he:"דרום אמריקה"},
-{id:"geo7",category:"geography",difficulty:"Medium",question_en:"Australia's capital is ___",question_he:"בירת אוסטרליה היא ___",answer_en:"Canberra",answer_he:"קנברה"},
-{id:"geo8",category:"geography",difficulty:"Hard",question_en:"Africa's most populous country is ___",question_he:"המדינה המאוכלסת באפריקה היא ___",answer_en:"Nigeria",answer_he:"ניגריה"},
-{id:"fl1",category:"flags",difficulty:"Easy",answer_en:"Japan",answer_he:"יפן",flag_country:"Japan"},
-{id:"fl2",category:"flags",difficulty:"Easy",answer_en:"France",answer_he:"צרפת",flag_country:"France"},
-{id:"fl3",category:"flags",difficulty:"Medium",answer_en:"South Korea",answer_he:"דרום קוריאה",flag_country:"South Korea"},
-{id:"fl4",category:"flags",difficulty:"Medium",answer_en:"Mexico",answer_he:"מקסיקו",flag_country:"Mexico"},
-{id:"fl5",category:"flags",difficulty:"Hard",answer_en:"Thailand",answer_he:"תאילנד",flag_country:"Thailand"},
-{id:"fl6",category:"flags",difficulty:"Hard",answer_en:"Colombia",answer_he:"קולומביה",flag_country:"Colombia"},
-{id:"fl7",category:"flags",difficulty:"Very Hard",answer_en:"Romania",answer_he:"רומניה",flag_country:"Romania"},
-{id:"fl8",category:"flags",difficulty:"Impossible",answer_en:"Ivory Coast",answer_he:"חוף השנהב",flag_country:"Ivory Coast"},
-{id:"fl9",category:"flags",difficulty:"Easy",answer_en:"Brazil",answer_he:"ברזיל",flag_country:"Brazil"},
-{id:"fl10",category:"flags",difficulty:"Easy",answer_en:"Germany",answer_he:"גרמניה",flag_country:"Germany"},
-{id:"fl11",category:"flags",difficulty:"Medium",answer_en:"India",answer_he:"הודו",flag_country:"India"},
-{id:"fl12",category:"flags",difficulty:"Medium",answer_en:"Canada",answer_he:"קנדה",flag_country:"Canada"},
-{id:"fl13",category:"flags",difficulty:"Hard",answer_en:"Argentina",answer_he:"ארגנטינה",flag_country:"Argentina"},
-{id:"fl14",category:"flags",difficulty:"Very Hard",answer_en:"Hungary",answer_he:"הונגריה",flag_country:"Hungary"},
-{id:"fl15",category:"flags",difficulty:"Impossible",answer_en:"Chad",answer_he:"צ'אד",flag_country:"Chad"},
-{id:"mov1",category:"movies",difficulty:"Easy",question_en:"The lion in Lion King is ___",question_he:"האריה במלך האריות הוא ___",answer_en:"Simba",answer_he:"סימבה"},
-{id:"mov2",category:"movies",difficulty:"Medium",question_en:"Jaws was directed by ___ (full name)",question_he:"לסתות בוים ע\"י ___ (שם מלא)",answer_en:"Steven Spielberg",answer_he:"סטיבן שפילברג"},
-{id:"mov3",category:"movies",difficulty:"Hard",question_en:"First Star Wars released in ___",question_he:"מלחמת הכוכבים הראשון יצא ב___",answer_en:"1977",answer_he:"1977"},
-{id:"mov4",category:"movies",difficulty:"Very Hard",question_en:"Wolverine's metal is ___",question_he:"המתכת של וולברין היא ___",answer_en:"Adamantium",answer_he:"אדמנטיום"},
-{id:"mov5",category:"movies",difficulty:"Impossible",question_en:"Avatar's (2009) planet is ___",question_he:"הכוכב באווטאר הוא ___",answer_en:"Pandora",answer_he:"פנדורה"},
-{id:"mov6",category:"movies",difficulty:"Easy",question_en:"Shrek is ___ (color)",question_he:"שרק הוא ___ (צבע)",answer_en:"Green",answer_he:"ירוק"},
-{id:"mov7",category:"movies",difficulty:"Medium",question_en:"Nemo is a ___ (fish type)",question_he:"נמו הוא ___ (סוג דג)",answer_en:"Clownfish",answer_he:"דג ליצן"},
-{id:"mov8",category:"movies",difficulty:"Hard",question_en:"Dark Knight's Joker was ___ (full name)",question_he:"הג'וקר באביר האפל גולם ע\"י ___",answer_en:"Heath Ledger",answer_he:"הית' לדג'ר"},
-{id:"car1",category:"cartoons",difficulty:"Easy",question_en:"SpongeBob's best friend is ___ (first name)",question_he:"החבר של בובספוג הוא ___",answer_en:"Patrick",answer_he:"פטריק"},
-{id:"car2",category:"cartoons",difficulty:"Medium",question_en:"The Simpsons live in ___",question_he:"הסימפסונים גרים ב___",answer_en:"Springfield",answer_he:"ספרינגפילד"},
-{id:"car3",category:"cartoons",difficulty:"Hard",question_en:"Dexter's sister is ___",question_he:"האחות של דקסטר היא ___",answer_en:"Dee Dee",answer_he:"די די"},
-{id:"car4",category:"cartoons",difficulty:"Very Hard",question_en:"Aang's bison is ___",question_he:"הביזון של אאנג הוא ___",answer_en:"Appa",answer_he:"אפה"},
-{id:"car5",category:"cartoons",difficulty:"Impossible",question_en:"Coraline's cat is called ___",question_he:"החתול בקורליין נקרא ___",answer_en:"Cat",answer_he:"חתול"},
-{id:"car6",category:"cartoons",difficulty:"Easy",question_en:"Mickey's Pluto is a ___",question_he:"פלוטו של מיקי הוא ___",answer_en:"Dog",answer_he:"כלב"},
-{id:"car7",category:"cartoons",difficulty:"Medium",question_en:"Powerpuff Girls villain: ___",question_he:"הנבל בפאוורפאף: ___",answer_en:"Mojo Jojo",answer_he:"מוג'ו ג'וג'ו"},
-{id:"car8",category:"cartoons",difficulty:"Hard",question_en:"Phineas & Ferb's platypus: ___",question_he:"הברווזן של פיניאס ופרב: ___",answer_en:"Perry",answer_he:"פרי"},
-{id:"fam1",category:"famous",difficulty:"Easy",question_en:"Mona Lisa painter: ___ (full name)",question_he:"צייר המונה ליזה: ___ (שם מלא)",answer_en:"Leonardo da Vinci",answer_he:"לאונרדו דה וינצ'י"},
-{id:"fam2",category:"famous",difficulty:"Medium",question_en:"Romeo & Juliet author: ___ (full name)",question_he:"מחבר רומיאו ויוליה: ___ (שם מלא)",answer_en:"William Shakespeare",answer_he:"וויליאם שייקספיר"},
-{id:"fam3",category:"famous",difficulty:"Hard",question_en:"Penicillin discoverer: ___ (full name)",question_he:"מגלה הפניצילין: ___ (שם מלא)",answer_en:"Alexander Fleming",answer_he:"אלכסנדר פלמינג"},
-{id:"fam4",category:"famous",difficulty:"Very Hard",question_en:"First female Nobel winner: ___ (full name)",question_he:"הזוכה הראשונה בנובל: ___ (שם מלא)",answer_en:"Marie Curie",answer_he:"מארי קירי"},
-{id:"fam5",category:"famous",difficulty:"Impossible",question_en:"WWW inventor: ___ (full name)",question_he:"ממציא הרשת: ___ (שם מלא)",answer_en:"Tim Berners-Lee",answer_he:"טים ברנרס-לי"},
-{id:"fam6",category:"famous",difficulty:"Easy",question_en:"King of Pop: ___ (full name)",question_he:"מלך הפופ: ___ (שם מלא)",answer_en:"Michael Jackson",answer_he:"מייקל ג'קסון"},
-{id:"fam7",category:"famous",difficulty:"Medium",question_en:"Relativity by: ___ (full name)",question_he:"תורת היחסות ע\"י: ___ (שם מלא)",answer_en:"Albert Einstein",answer_he:"אלברט איינשטיין"},
-{id:"fam8",category:"famous",difficulty:"Hard",question_en:"First US president: ___ (full name)",question_he:"נשיא ארה\"ב הראשון: ___ (שם מלא)",answer_en:"George Washington",answer_he:"ג'ורג' וושינגטון"},
-{id:"sp1",category:"sport",difficulty:"Easy",question_en:"Basketball: ___ players per side",question_he:"כדורסל: ___ שחקנים",answer_en:"5",answer_he:"5"},
-{id:"sp2",category:"sport",difficulty:"Medium",question_en:"Shuttlecock sport: ___",question_he:"כדורנוצה: ___",answer_en:"Badminton",answer_he:"בדמינטון"},
-{id:"sp3",category:"sport",difficulty:"Hard",question_en:"Marathon distance: ___ km",question_he:"מרתון: ___ ק\"מ",answer_en:"42.195",answer_he:"42.195"},
-{id:"sp4",category:"sport",difficulty:"Very Hard",question_en:"First modern Olympics: ___",question_he:"אולימפיאדה מודרנית ראשונה: ___",answer_en:"1896",answer_he:"1896"},
-{id:"sp5",category:"sport",difficulty:"Impossible",question_en:"Only country in every World Cup: ___",question_he:"המדינה היחידה בכל מונדיאל: ___",answer_en:"Brazil",answer_he:"ברזיל"},
-{id:"sp6",category:"sport",difficulty:"Easy",question_en:"Wimbledon sport: ___",question_he:"ספורט בווימבלדון: ___",answer_en:"Tennis",answer_he:"טניס"},
-{id:"sp7",category:"sport",difficulty:"Medium",question_en:"Olympic rings count: ___",question_he:"טבעות אולימפיות: ___",answer_en:"5",answer_he:"5"},
-{id:"fb1",category:"football",difficulty:"Easy",question_en:"Football: ___ players per side",question_he:"כדורגל: ___ שחקנים",answer_en:"11",answer_he:"11"},
-{id:"fb2",category:"football",difficulty:"Medium",question_en:"1930 World Cup winner: ___",question_he:"מנצחת מונדיאל 1930: ___",answer_en:"Uruguay",answer_he:"אורוגוואי"},
-{id:"fb3",category:"football",difficulty:"Hard",question_en:"Brazil's team nickname: ___",question_he:"כינוי נבחרת ברזיל: ___",answer_en:"Selecao",answer_he:"סלסאו"},
-{id:"fb4",category:"football",difficulty:"Very Hard",question_en:"'Theatre of Dreams': ___",question_he:"'תיאטרון החלומות': ___",answer_en:"Old Trafford",answer_he:"אולד טראפורד"},
-{id:"fb5",category:"football",difficulty:"Impossible",question_en:"Most goals in a year: ___ (full name)",question_he:"שיאן שערים בשנה: ___ (שם מלא)",answer_en:"Lionel Messi",answer_he:"ליאונל מסי"},
-{id:"fb6",category:"football",difficulty:"Easy",question_en:"Send-off card color: ___",question_he:"צבע כרטיס הרחקה: ___",answer_en:"Red",answer_he:"אדום"},
-{id:"fb7",category:"football",difficulty:"Medium",question_en:"Most CL titles: ___",question_he:"הכי הרבה תארי צ'מפיונס: ___",answer_en:"Real Madrid",answer_he:"ריאל מדריד"},
-{id:"fas1",category:"fashion",difficulty:"Easy",question_en:"'CC' logo brand: ___",question_he:"מותג לוגו CC: ___",answer_en:"Chanel",answer_he:"שאנל"},
-{id:"fas2",category:"fashion",difficulty:"Medium",question_en:"Italian fashion capital: ___",question_he:"בירת האופנה באיטליה: ___",answer_en:"Milan",answer_he:"מילאנו"},
-{id:"fas3",category:"fashion",difficulty:"Hard",question_en:"Little Black Dress creator: ___ (full name)",question_he:"יוצרת השמלה השחורה: ___ (שם מלא)",answer_en:"Coco Chanel",answer_he:"קוקו שאנל"},
-{id:"fas4",category:"fashion",difficulty:"Very Hard",question_en:"Denim is made from ___",question_he:"דנים מיוצר מ___",answer_en:"Cotton",answer_he:"כותנה"},
-{id:"fas5",category:"fashion",difficulty:"Impossible",question_en:"Kimono origin: ___",question_he:"מקור הקימונו: ___",answer_en:"Japan",answer_he:"יפן"},
-{id:"fas6",category:"fashion",difficulty:"Easy",question_en:"Swoosh logo brand: ___",question_he:"מותג הסווש: ___",answer_en:"Nike",answer_he:"נייקי"},
-{id:"str1",category:"strange_questions",difficulty:"Easy",question_en:"A slug has ___ noses",question_he:"לחילזון ___ אפים",answer_en:"4",answer_he:"4"},
-{id:"str2",category:"strange_questions",difficulty:"Medium",question_en:"Sleeps 3 years: ___",question_he:"ישנה 3 שנים: ___",answer_en:"Snail",answer_he:"חילזון"},
-{id:"str3",category:"strange_questions",difficulty:"Hard",question_en:"Hippo sweat color: ___",question_he:"צבע זיעת היפו: ___",answer_en:"Red",answer_he:"אדום"},
-{id:"str4",category:"strange_questions",difficulty:"Impossible",question_en:"Octopus hearts: ___",question_he:"לבבות תמנון: ___",answer_en:"3",answer_he:"3"},
-{id:"str5",category:"strange_questions",difficulty:"Easy",question_en:"92% water fruit: ___",question_he:"פרי 92% מים: ___",answer_en:"Watermelon",answer_he:"אבטיח"},
-{id:"str6",category:"strange_questions",difficulty:"Medium",question_en:"Diamond rain planet: ___",question_he:"גשם יהלומים על: ___",answer_en:"Neptune",answer_he:"נפטון"},
-{id:"str7",category:"strange_questions",difficulty:"Hard",question_en:"Can't jump: ___",question_he:"לא קופץ: ___",answer_en:"Elephant",answer_he:"פיל"},
-{id:"sci1",category:"science",difficulty:"Easy",question_en:"The Red Planet: ___",question_he:"הכוכב האדום: ___",answer_en:"Mars",answer_he:"מאדים"},
-{id:"sci2",category:"science",difficulty:"Medium",question_en:"Gold symbol: ___",question_he:"סימן זהב: ___",answer_en:"Au",answer_he:"Au"},
-{id:"sci3",category:"science",difficulty:"Hard",question_en:"Speed of light ≈ ___ km/s",question_he:"מהירות האור ≈ ___ קמ\"ש",answer_en:"300000",answer_he:"300000"},
-{id:"sci4",category:"science",difficulty:"Very Hard",question_en:"Highest melting point: ___",question_he:"נקודת היתוך גבוהה: ___",answer_en:"Tungsten",answer_he:"טונגסטן"},
-{id:"sci5",category:"science",difficulty:"Impossible",question_en:"Most atmospheric gas: ___",question_he:"הגז השכיח באטמוספירה: ___",answer_en:"Nitrogen",answer_he:"חנקן"},
-{id:"sci6",category:"science",difficulty:"Easy",question_en:"Keeps us grounded: ___",question_he:"הכוח שמחזיק אותנו: ___",answer_en:"Gravity",answer_he:"כוח הכבידה"},
-{id:"sci7",category:"science",difficulty:"Medium",question_en:"Human bones: ___",question_he:"עצמות אדם: ___",answer_en:"206",answer_he:"206"},
-{id:"sci8",category:"science",difficulty:"Hard",question_en:"Cell powerhouse: ___",question_he:"תחנת כוח התא: ___",answer_en:"Mitochondria",answer_he:"מיטוכונדריה"},
-];
+// Questions loaded from external file
+import QS from "./questions";
 
 const ICONS={general_knowledge:"🧠",history:"📜",geography:"🌍",flags:"🏳️",movies:"🎬",cartoons:"📺",famous:"⭐",sport:"🏆",football:"⚽",fashion:"👗",strange_questions:"🤯",science:"🔬"};
 const CATS=Object.keys(ICONS);
 const EMO=["😎","🤩","🥳","😏","🤓"];
 
-const T={en:{appName:"Bluffy",tagline:"Bluff your way to the win!",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back",howToPlay:"How to Play",howTitle:"How to Play Bluffy",howBody:"1. Create a room and share the code\n2. Each round, one player picks a category\n3. Everyone types their answer\n4. If CORRECT — write a convincing WRONG answer to fool others!\n5. All answers shuffled as multiple choice\n6. Everyone picks what they think is correct\n\nScoring:\n+2 for correct pick\n+1 per player your fake answer fools\n0 if you pick your own fake (self-fool!)\n\nMost points wins!",close:"Close"},
-he:{appName:"Bluffy",tagline:"!בלוף את דרכך עד הניצחון",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה",howToPlay:"איך משחקים",howTitle:"איך משחקים בבלאפי",howBody:"1. צרו חדר ושתפו את הקוד עם חברים\n2. כל סיבוב, שחקן בוחר קטגוריה\n3. כולם מקלידים תשובה\n4. אם נכון — כתבו תשובה שגויה משכנעת!\n5. כל התשובות מעורבבות כרב-ברירה\n6. כולם בוחרים את הנכונה\n\nניקוד:\n+2 על בחירה נכונה\n+1 לכל שחקן שהבלאף שלכם רימה\n0 אם בחרתם בבלאף שלכם!\n\nהכי הרבה נקודות מנצח!",close:"סגור"}};
+const T={en:{appName:"Bluffy",tagline:"The Bluffing Party Game",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back",howToPlay:"How to Play",howTitle:"How to Play Bluffy",howBody:"1. Create a room and share the code\n2. Each round, one player picks a category\n3. Everyone types their answer\n4. If CORRECT — write a convincing WRONG answer to fool others!\n5. All answers shuffled as multiple choice\n6. Everyone picks what they think is correct\n\nScoring:\n+2 for correct pick\n+1 per player your fake answer fools\n0 if you pick your own fake (self-fool!)\n\nMost points wins!",close:"Close"},
+he:{appName:"בלאפי",tagline:"משחק הבלאפים",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה",howToPlay:"איך משחקים",howTitle:"איך משחקים בבלאפי",howBody:"1. צרו חדר ושתפו את הקוד עם חברים\n2. כל סיבוב, שחקן בוחר קטגוריה\n3. כולם מקלידים תשובה\n4. אם נכון — כתבו תשובה שגויה משכנעת!\n5. כל התשובות מעורבבות כרב-ברירה\n6. כולם בוחרים את הנכונה\n\nניקוד:\n+2 על בחירה נכונה\n+1 לכל שחקן שהבלאף שלכם רימה\n0 אם בחרתם בבלאף שלכם!\n\nהכי הרבה נקודות מנצח!",close:"סגור"}};
 
 
 // ═══════════════════════════════════════════════════════════
@@ -261,49 +158,8 @@ function matchScore(input,correct){
   return score;
 }
 
-function isCorrect(input, correct) {
-  if (!input || !correct) return false;
-
-  const a = deepNorm(input);
-  const b = deepNorm(correct);
-
-  if (!a || !b) return false;
-
-  if (a === b) return true;
-
-  // Strict numeric
-  if (/^\d+(\.\d+)?$/.test(b)) return a === b;
-
-  const aTokens = tokenize(a);
-  const bTokens = tokenize(b);
-
-  // ---- Single word answers ----
-  if (bTokens.length === 1) {
-    const dist = lev(a, b);
-
-    // Allow max 1 typo for short words
-    if (b.length <= 6) return dist <= 1;
-
-    // Allow max 2 typos for longer words
-    return dist <= 2;
-  }
-
-  // ---- Multi-word answers (names etc.) ----
-  const first = bTokens[0];
-  const last = bTokens[bTokens.length - 1];
-
-  if (aTokens.length === 1) {
-    if (lev(aTokens[0], first) <= 1) return true;
-    if (lev(aTokens[0], last) <= 1) return true;
-  }
-
-  // Allow small typos in full name
-  let matches = 0;
-  for (const at of aTokens) {
-    if (bTokens.some(bt => lev(at, bt) <= 1)) matches++;
-  }
-
-  return matches >= bTokens.length;
+function isCorrect(input,correct){
+  return matchScore(input,correct)>=0.75;
 }
 
 // Check both languages
@@ -335,7 +191,7 @@ function strictMatch(i,c){return deepNorm(i)===deepNorm(c);}
 
 function detectAnswerType(q){
   const a=q.answer_en||"";
-  if(q.flag_country||q.category==="flags")return"country";
+  if(q.flag_country||q.flag_code||q.category==="flags")return"country";
   if(/^\d{3,4}$/.test(a))return"year";
   if(/^\d+\.?\d*$/.test(a))return"number";
   if(q.category==="famous")return"person";
@@ -742,8 +598,8 @@ export default function Bluffy(){
   const playAgain=()=>{if(!isHost)return;const u={};playerList.forEach(([id])=>{u[`players/${id}/score`]=0;});u.state="lobby";u.round=0;update(ref(db,`rooms/${room}`),u);};
 
   // ═══ COMPONENTS ═══
-  const FI=({c})=>{const u=flagUrl(c);return u?<img src={u} alt="" style={{width:160,height:100,objectFit:"cover",borderRadius:8,border:"2px solid rgba(255,255,255,.2)",margin:"12px auto",display:"block"}}/>:null;};
-  const QT=()=>{const q=rd?.question;if(!q)return"";if(q.flag_country)return he?t.flag:t.flag;return he?q.question_he:q.question_en;};
+  const FI=({c,code})=>{const u=code?`https://flagcdn.com/w160/${code}.png`:flagUrl(c);return u?<img src={u} alt="" style={{width:160,height:100,objectFit:"cover",borderRadius:8,border:"2px solid rgba(255,255,255,.2)",margin:"12px auto",display:"block"}}/>:null;};
+  const QT=()=>{const q=rd?.question;if(!q)return"";if(q.flag_country||q.flag_code)return he?t.flag:t.flag;return he?q.question_he:q.question_en;};
   const RB=()=><div style={{textAlign:"center",mb:16,marginBottom:16}}><span style={{background:"rgba(255,215,0,.1)",color:"#FFD700",padding:"6px 20px",borderRadius:20,fontSize:13,fontWeight:700,border:"1px solid rgba(255,215,0,.2)"}}>{t.round} {rd?.round||1} {t.of} {rd?.settings?.rounds||10}</span></div>;
   const LeaveBtn=()=><button onClick={leaveRoom} style={{...B,width:"100%",background:"rgba(255,59,48,.15)",color:"#FF6B6B",padding:"12px",borderRadius:12,marginTop:16,fontSize:14,fontWeight:600}}>{t.leave} 🚪</button>;
   const TopBar=()=><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
@@ -870,7 +726,7 @@ export default function Bluffy(){
     </div>
     <div style={{...C,marginBottom:16,textAlign:"center",borderColor:"rgba(255,215,0,.2)"}}>
       <span style={{fontSize:11,color:"rgba(255,255,255,.4)",textTransform:"uppercase",letterSpacing:2}}>{t[q?.category]} • {q?.difficulty}</span>
-      {q?.flag_country&&<FI c={q.flag_country}/>}
+      {(q?.flag_country||q?.flag_code)&&<FI c={q.flag_country} code={q.flag_code}/>}
       <p style={{color:"#fff",fontSize:20,fontWeight:700,margin:"10px 0 0",lineHeight:1.4}}>{QT()}</p>
     </div>
     {!answered?(<div style={{...C,textAlign:"center"}}>
@@ -899,7 +755,7 @@ export default function Bluffy(){
   if(state==="reveal"&&rd?.options)return(<div style={{minHeight:"100vh",background:bg,padding:20,direction:he?"rtl":"ltr"}}><div style={{maxWidth:500,margin:"0 auto"}}>
     <TopBar/><RB/>
     <div style={{...C,marginBottom:16,textAlign:"center",borderColor:"rgba(255,215,0,.2)"}}>
-      {rd.question?.flag_country&&<FI c={rd.question.flag_country}/>}
+      {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code}/>}
       <p style={{color:"#fff",fontSize:18,fontWeight:700,margin:0}}>{QT()}</p>
     </div>
     {!selected?(<div>
@@ -920,7 +776,7 @@ export default function Bluffy(){
     <TopBar/><RB/>
     <div style={{...C,marginBottom:16,textAlign:"center",borderColor:"rgba(74,222,128,.3)",background:"rgba(74,222,128,.05)"}}>
       <span style={{fontSize:12,color:"rgba(255,255,255,.4)",textTransform:"uppercase",letterSpacing:2}}>{t.correct}</span>
-      {rd.question?.flag_country&&<FI c={rd.question.flag_country}/>}
+      {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code}/>}
       <p style={{color:"#4ade80",fontSize:24,fontWeight:800,margin:"8px 0"}}>{rd.correctAnswer}</p>
     </div>
     {playerList.map(([id,p],i)=>{const r=rd.results[id]||{};const oi=rd.selections?.[id];const pk=rd.options?.[oi];
