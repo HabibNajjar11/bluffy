@@ -422,26 +422,6 @@ export default function Bluffy(){
       return()=>clearInterval(timerRef.current);
     }
   },[state,rd?.deadline]);
-  useEffect(()=>{
-  if(state==="reveal" && rd?.revealDeadline){
-
-    const tick = ()=>{
-      const left = Math.max(0, Math.ceil((rd.revealDeadline - Date.now())/1000));
-      setTimer(left);
-
-      if(left<=0){
-        clearInterval(timerRef.current);
-        if(isHost){
-          hostCalcScores();
-        }
-      }
-    };
-
-    tick();
-    timerRef.current=setInterval(tick,1000);
-    return ()=>clearInterval(timerRef.current);
-  }
-},[state, rd?.revealDeadline]);
 
   // ═══ AUTO-PROGRESS ═══
   useEffect(()=>{
@@ -630,12 +610,11 @@ const hostAutoProgress = async () => {
       [os[i],os[j]]=[os[j],os[i]];
     }
     
-    update(ref(db,`rooms/${room}`),{
+update(ref(db,`rooms/${room}`),{
   state:"reveal",
   options:os,
   correctAnswer:ca,
-  selections:null,
-  revealDeadline: Date.now() + (rd?.settings?.time || 30) * 1000
+  selections:null
 });
   };
 
@@ -851,22 +830,6 @@ const hostAutoProgress = async () => {
   // ════════ REVEAL ════════
   if(state==="reveal"&&rd?.options)return(<div style={{minHeight:"100vh",background:bg,padding:20,direction:he?"rtl":"ltr"}}><div style={{maxWidth:500,margin:"0 auto"}}>
     <TopBar/><RB/>
-    <div style={{textAlign:"center",marginBottom:12}}>
-        <span style={{
-          color: timer<=5 ? "#f87171" : "#FFD700",
-          fontSize:32,
-          fontWeight:900
-        }}>
-          {timer}
-        </span>
-        <span style={{
-          color:"rgba(255,255,255,.4)",
-          fontSize:12,
-          marginInlineStart:8
-        }}>
-          {t.timerLabel}
-        </span>
-      </div>
     <div style={{...C,marginBottom:16,textAlign:"center",borderColor:"rgba(255,215,0,.2)"}}>
       {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code}/>}
       <p style={{color:"#fff",fontSize:18,fontWeight:700,margin:0}}>{QT()}</p>
