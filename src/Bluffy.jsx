@@ -651,7 +651,27 @@ update(ref(db,`rooms/${room}`),{
   const playAgain=()=>{if(!isHost)return;const u={};playerList.forEach(([id])=>{u[`players/${id}/score`]=0;});u.state="lobby";u.round=0;update(ref(db,`rooms/${room}`),u);};
 
   // ═══ COMPONENTS ═══
-  const FI=({c,code})=>{const u=code?`https://flagcdn.com/w160/${code}.png`:flagUrl(c);return u?<img src={u} alt="" style={{width:160,height:100,objectFit:"cover",borderRadius:8,border:"2px solid rgba(255,255,255,.2)",margin:"12px auto",display:"block"}}/>:null;};
+  const FI=({c,code,flag})=>{
+  const u =
+    flag ||
+    (code ? `https://flagcdn.com/w160/${code}.png` : flagUrl(c));
+
+  return u ? (
+    <img
+      src={u}
+      alt=""
+      style={{
+        width:160,
+        height:100,
+        objectFit:"cover",
+        borderRadius:8,
+        border:"2px solid rgba(255,255,255,.2)",
+        margin:"12px auto",
+        display:"block"
+      }}
+    />
+  ) : null;
+};
   const QT=()=>{const q=rd?.question;if(!q)return"";if(q.flag_country||q.flag_code)return he?t.flag:t.flag;return he?q.question_he:q.question_en;};
   const RB=()=><div style={{textAlign:"center",mb:16,marginBottom:16}}><span style={{background:"rgba(255,215,0,.1)",color:"#FFD700",padding:"6px 20px",borderRadius:20,fontSize:13,fontWeight:700,border:"1px solid rgba(255,215,0,.2)"}}>{t.round} {rd?.round||1} {t.of} {rd?.settings?.rounds||10}</span></div>;
   const LeaveBtn=()=><button onClick={leaveRoom} style={{...B,width:"100%",background:"rgba(255,59,48,.15)",color:"#FF6B6B",padding:"12px",borderRadius:12,marginTop:16,fontSize:14,fontWeight:600}}>{t.leave} 🚪</button>;
@@ -795,7 +815,7 @@ update(ref(db,`rooms/${room}`),{
     </div>
     <div style={{...C,marginBottom:16,textAlign:"center",borderColor:"rgba(255,215,0,.2)"}}>
       <span style={{fontSize:11,color:"rgba(255,255,255,.4)",textTransform:"uppercase",letterSpacing:2}}>{t[q?.category]} • {q?.difficulty}</span>
-      {(q?.flag_country||q?.flag_code)&&<FI c={q.flag_country} code={q.flag_code}/>}
+      {(q?.flag_country||q?.flag_code)&&<FI c={q.flag_country} code={q.flag_code} flag={q.flag}/>}
       <p style={{color:"#fff",fontSize:20,fontWeight:700,margin:"10px 0 0",lineHeight:1.4}}>{QT()}</p>
     </div>
     {!answered?(<div style={{...C,textAlign:"center"}}>
@@ -835,7 +855,7 @@ update(ref(db,`rooms/${room}`),{
     </div>}
     <div style={{...C,marginBottom:20,textAlign:"center",borderColor:"rgba(255,215,0,.25)",background:"rgba(255,215,0,.04)"}}>
       <span style={{fontSize:11,color:"rgba(255,255,255,.4)",textTransform:"uppercase",letterSpacing:2}}>{t[rd.question?.category]} {rd.question?.difficulty?`• ${rd.question.difficulty}`:""}</span>
-      {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code}/>}
+      {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code} flag={rd.question.flag}/>}
       <p style={{color:"#fff",fontSize:20,fontWeight:700,margin:"10px 0 0",lineHeight:1.4}}>{QT()}</p>
     </div>
     {!selected?(<div>
@@ -868,7 +888,7 @@ update(ref(db,`rooms/${room}`),{
     <div style={{...C,marginBottom:20,textAlign:"center",borderColor:"rgba(74,222,128,.3)",background:"linear-gradient(135deg,rgba(74,222,128,.08),rgba(74,222,128,.02))",position:"relative",overflow:"hidden"}}>
       <div style={{position:"absolute",top:-20,right:-20,fontSize:80,opacity:.06}}>✓</div>
       <span style={{fontSize:12,color:"rgba(255,255,255,.4)",textTransform:"uppercase",letterSpacing:3,fontWeight:700}}>{t.correct}</span>
-      {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code}/>}
+      {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code} flag={rd.question.flag}/>}
       <p style={{color:"#4ade80",fontSize:28,fontWeight:900,margin:"8px 0 0",textShadow:"0 0 20px rgba(74,222,128,.3)"}}>{rd.correctAnswer}</p>
     </div>
 
