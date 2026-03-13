@@ -19,213 +19,125 @@ he:{appName:"Bluffy",tagline:"!בלוף את דרגך עד לניצחון",creat
 
 
 // ═══════════════════════════════════════════════════════════
-// IR MATCHING ENGINE + SMART DISTRACTOR SYSTEM
+// IR MATCHING ENGINE
 // ═══════════════════════════════════════════════════════════
 
-// --- Normalization ---
 function norm(s){
   if(!s)return"";
   return s.toLowerCase().trim()
-    .replace(/[\u0591-\u05C7]/g,"") // remove Hebrew niqqud
-    .replace(/[^\w\s\u0590-\u05FF]/g,"") // keep letters, digits, spaces, Hebrew
-    .normalize("NFD").replace(/[\u0300-\u036f]/g,"") // remove diacritics
+    .replace(/[\u0591-\u05C7]/g,"")
+    .replace(/[^\w\s\u0590-\u05FF]/g,"")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
     .replace(/\s+/g," ").trim();
 }
 
-// Hebrew final-form normalization (ך→כ, ם→מ, ן→נ, ף→פ, ץ→צ)
 function normHe(s){
   return s.replace(/ך/g,"כ").replace(/ם/g,"מ").replace(/ן/g,"נ").replace(/ף/g,"פ").replace(/ץ/g,"צ");
 }
 
 function deepNorm(s){return normHe(norm(s));}
 
-// --- Levenshtein ---
-function lev(a,b){
+// Damerau-Levenshtein: transpositions (ei→ie) count as 1 edit, not 2
+function dlev(a,b){
   const m=a.length,n=b.length;
-  if(m===0)return n; if(n===0)return m;
-  const d=Array.from({length:m+1},()=>Array(n+1).fill(0));
-  for(let i=0;i<=m;i++)d[i][0]=i;
-  for(let j=0;j<=n;j++)d[0][j]=j;
-  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)
-    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]!==b[j-1]?1:0));
-  return d[m][n];
-}
-
-// Normalized edit distance [0,1] where 0=identical
-function normLev(a,b){
-  if(!a&&!b)return 0;
-  const maxLen=Math.max(a.length,b.length);
-  return maxLen===0?0:lev(a,b)/maxLen;
-}
-
-// --- Token utilities ---
-function tokenize(s){return deepNorm(s).split(" ").filter(t=>t.length>0);}
-
-function jaccard(a,b){
-  const sa=new Set(tokenize(a)),sb=new Set(tokenize(b));
-  if(sa.size===0&&sb.size===0)return 1;
-  let inter=0;
-  for(const t of sa)if(sb.has(t))inter++;
-  return inter/(sa.size+sb.size-inter);
-}
-
-// Fuzzy token match: does token a match any token in set b within lev threshold?
-function fuzzyTokenMatch(tok,tokens,threshold){
-  return tokens.some(t=>lev(tok,t)<=threshold);
-}
-
-// --- TRANSLITERATION MAP (Hebrew ↔ common English forms) ---
-const TRANSLIT={
-  "מסי":"messi","רונאלדו":"ronaldo","איינשטיין":"einstein","ניוטון":"newton",
-  "שייקספיר":"shakespeare","דה וינצי":"da vinci","לאונרדו":"leonardo",
-  "מוצרט":"mozart","בטהובן":"beethoven","פיקאסו":"picasso",
-  "ואן גוך":"van gogh","דרווין":"darwin","גלילאו":"galileo",
-  "טסלה":"tesla","אדיסון":"edison","פלמינג":"fleming",
-  "קירי":"curie","ארמסטרונג":"armstrong","ניל":"neil",
-  "קלאופטרה":"cleopatra","נפוליאון":"napoleon","צרצ'יל":"churchill",
-  "היטלר":"hitler","סטלין":"stalin","לנין":"lenin",
-  "גנדי":"gandhi","מנדלה":"mandela",
-};
-
-function transliterate(s){
-  const n=deepNorm(s);
-  // Check if Hebrew input matches a known transliteration
-  for(const[he,en] of Object.entries(TRANSLIT)){
-    if(n.includes(he))return en;
-  }
-  // Check reverse
-  for(const[he,en] of Object.entries(TRANSLIT)){
-    if(n.includes(en))return he;
-  }
-  return null;
-}
-
-// ═══════════════════════════════════════════════════════════
-// isCorrect — MAIN MATCHING FUNCTION
-// Score ∈ [0,1], threshold 0.85
-// ═══════════════════════════════════════════════════════════
-function matchScore(input,correct){
-  const a=deepNorm(input),b=deepNorm(correct);
-  if(!a||!b)return 0;
-  if(a===b)return 1.0;
-
-  // --- NUMERIC: must be exact ---
-  if(/^\d+\.?\d*$/.test(b))return a===b?1.0:0.0;
-
-  // --- SHORT (1-3 chars, like Au, H2O): exact or nothing ---
-  if(b.length<=3)return a===b?1.0:0.0;
-
-  // --- Compute components ---
-  const jac=jaccard(input,correct);
-  const nLev=1-normLev(a,b);
-
-  // --- Named entity bonus ---
-  const aToks=tokenize(input),bToks=tokenize(correct);
-  let nameBonus=0;
-
-  if(bToks.length>=2){
-    // Last name match (strongest signal for person names)
-    const bLast=bToks[bToks.length-1];
-    if(aToks.length===1&&lev(aToks[0],bLast)<=1)nameBonus=0.5;
-    // First name match
-    const bFirst=bToks[0];
-    if(aToks.length===1&&lev(aToks[0],bFirst)<=1)nameBonus=Math.max(nameBonus,0.4);
-    // Full name with typos: check each token
-    if(aToks.length>=2){
-      let matched=0;
-      for(const at of aToks){
-        if(bToks.some(bt=>lev(at,bt)<=1))matched++;
-      }
-      if(matched>=bToks.length)nameBonus=0.5;
-      else if(matched>0)nameBonus=0.2*(matched/bToks.length);
+  if(m===0)return n;if(n===0)return m;
+  const d=Array.from({length:m+2},()=>Array(n+2).fill(0));
+  const mx=m+n;d[0][0]=mx;
+  for(let i=0;i<=m;i++){d[i+1][0]=mx;d[i+1][1]=i;}
+  for(let j=0;j<=n;j++){d[0][j+1]=mx;d[1][j+1]=j;}
+  const da={};
+  for(let i=1;i<=m;i++){
+    let db=0;
+    for(let j=1;j<=n;j++){
+      const i1=da[b[j-1]]||0,j1=db;
+      let cost=1;
+      if(a[i-1]===b[j-1]){cost=0;db=j;}
+      d[i+1][j+1]=Math.min(d[i][j]+cost,d[i+1][j]+1,d[i][j+1]+1,d[i1][j1]+(i-i1-1)+1+(j-j1-1));
     }
+    da[a[i-1]]=i;
   }
-
-  // --- Transliteration bonus ---
-  let translitBonus=0;
-  const translitA=transliterate(input);
-  const translitB=transliterate(correct);
-  if(translitA&&deepNorm(translitA)===b)translitBonus=0.6;
-  if(translitB&&deepNorm(translitB)===a)translitBonus=0.6;
-  // Also check if transliterated form is close
-  if(translitA&&(1-normLev(deepNorm(translitA),b))>0.8)translitBonus=Math.max(translitBonus,0.4);
-
-  // --- Combine ---
-  // Weighted: edit distance matters most, then Jaccard, then bonuses
-  const score=Math.min(1.0, nLev*0.4 + jac*0.3 + nameBonus*0.2 + translitBonus*0.1
-    + (a===b?1:0)*0.0); // exact already returns 1.0 above
-
-  return score;
+  return d[m+1][n+1];
 }
 
-function isCorrect(input, correct) {
-  if (!input || !correct) return false;
-
-  const a = deepNorm(input);
-  const b = deepNorm(correct);
-
-  if (!a || !b) return false;
-
-  if (a === b) return true;
-
-  // Strict numeric
-  if (/^\d+(\.\d+)?$/.test(b)) return a === b;
-
-  const aTokens = tokenize(a);
-  const bTokens = tokenize(b);
-
-  // ---- Single word answers ----
-  if (bTokens.length === 1) {
-    const dist = lev(a, b);
-
-    // Allow max 1 typo for short words
-    if (b.length <= 6) return dist <= 1;
-
-    // Allow max 2 typos for longer words
-    return dist <= 2;
-  }
-
-  // ---- Multi-word answers (names etc.) ----
-  const first = bTokens[0];
-  const last = bTokens[bTokens.length - 1];
-
-  if (aTokens.length === 1) {
-    if (lev(aTokens[0], first) <= 1) return true;
-    if (lev(aTokens[0], last) <= 1) return true;
-  }
-
-  // Allow small typos in full name
-  let matches = 0;
-  for (const at of aTokens) {
-    if (bTokens.some(bt => lev(at, bt) <= 1)) matches++;
-  }
-
-  return matches >= bTokens.length;
+// Is this typo acceptable? Uses edit distance + similarity ratio
+// Tight enough to reject Iran≠Iraq, Austria≠Australia
+// Loose enough to accept Gren→Green, Einstien→Einstein, Daimond→Diamond
+function typoOk(a,b){
+  const d=dlev(a,b);
+  if(d===0)return true;
+  const maxLen=Math.max(a.length,b.length);
+  const ratio=1-d/maxLen;
+  if(maxLen<=3)return false;              // Cat, Red, Au → exact only
+  if(maxLen<=8)return d<=1&&ratio>0.75;   // Green(5), Diamond(7) → 1 edit, >75% match
+  if(maxLen<=14)return d<=2&&ratio>0.80;  // Cleopatra(9), Shakespeare(11) → 2 edits, >80%
+  return d<=3&&ratio>0.80;                // Very long words → 3 edits, >80%
 }
 
-// Check both languages
-function isCorrectBilingual(input,ansEn,ansHe){
-  const scoreEn = matchScore(input, ansEn);
-  const scoreHe = matchScore(input, ansHe);
-  return Math.max(scoreEn, scoreHe) >= 0.65;
-}
+// ═══ MAIN MATCHING FUNCTION ═══
+// Handles: exact, numbers, single words with typos, multi-word partial names
+function isCorrect(input,correct){
+  if(!input||!correct)return false;
+  const a=deepNorm(input),b=deepNorm(correct);
+  if(!a||!b)return false;
+  if(a===b)return true;
 
-// --- Grouping: are two wrong answers effectively the same? ---
-function isSameText(a,b){
-  const na=deepNorm(a),nb=deepNorm(b);
-  if(na===nb)return true;
-  if(na.length>3&&nb.length>3&&normLev(na,nb)<0.2)return true;
+  // Numbers: exact only (1945≠1946, 7≠17)
+  if(/^\d+\.?\d*$/.test(b))return a===b;
+
+  const aT=a.split(" ").filter(w=>w.length>0);
+  const bT=b.split(" ").filter(w=>w.length>0);
+
+  // Single word answer: check typo tolerance
+  if(bT.length===1)return typoOk(a,b);
+
+  // Multi-word answer: get significant tokens (3+ chars, skip "da", "of", "the")
+  const sig=bT.filter(t=>t.length>=3);
+  if(sig.length===0)return typoOk(a,b);
+
+  // User typed single word (3+ chars) → match ANY significant token
+  // "Messi" matches "Lionel Messi", "Armstrong" matches "Neil Armstrong"
+  if(aT.length===1&&aT[0].length>=3)
+    return sig.some(t=>typoOk(aT[0],t));
+
+  // Single word too short → reject ("of", "le", "da" alone = not enough)
+  if(aT.length===1)return false;
+
+  // User typed multiple words → must cover ALL significant tokens
+  let matched=0;
+  for(const bt of sig){
+    if(aT.some(at=>typoOk(at,bt)))matched++;
+  }
+  if(matched>=sig.length)return true;
+
+  // Partial multi-word: at least one 4+ char word matches a token
+  for(const at of aT){
+    if(at.length>=4&&sig.some(bt=>typoOk(at,bt)))return true;
+  }
+
   return false;
 }
 
-// Title Case for English, passthrough for Hebrew
+// Check against both English and Hebrew answers
+function isCorrectBilingual(input,ansEn,ansHe){
+  return isCorrect(input,ansEn)||isCorrect(input,ansHe);
+}
+
+// Are two wrong answers effectively the same? (for grouping duplicates)
+function isSameText(a,b){
+  const na=deepNorm(a),nb=deepNorm(b);
+  if(na===nb)return true;
+  if(na.length>3&&nb.length>3){const d=dlev(na,nb);return d<=1&&(1-d/Math.max(na.length,nb.length))>0.80;}
+  return false;
+}
+
+// Title Case for English display, passthrough for Hebrew
 function titleCase(s,ln){
   if(!s)return s;
   if(ln==="he"||/[\u0590-\u05FF]/.test(s))return s;
   return s.replace(/\w\S*/g,w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase());
 }
 
-// Strict match for bluff rejection (only exact normalized match)
+// Exact normalized match (for bluff rejection: don't let them submit the correct answer)
 function strictMatch(i,c){return deepNorm(i)===deepNorm(c);}
 
 // ═══════════════════════════════════════════════════════════
