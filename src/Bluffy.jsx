@@ -14,6 +14,22 @@ const ICONS={general_knowledge:"🧠",history:"📜",geography:"🌍",flags:"�
 const CATS=Object.keys(ICONS);
 const EMO=["😎","🤩","🥳","😏","🤓"];
 
+// ═══ AVATARS ═══
+const AVATARS=[
+  {id:"ninja",emoji:"🥷",label:"Ninja",bg:"linear-gradient(135deg,#1a1a2e,#16213e)"},
+  {id:"dragon",emoji:"🐉",label:"Dragon",bg:"linear-gradient(135deg,#b91c1c,#f59e0b)"},
+  {id:"alien",emoji:"👾",label:"Alien",bg:"linear-gradient(135deg,#7c3aed,#2dd4bf)"},
+  {id:"robot",emoji:"🤖",label:"Robot",bg:"linear-gradient(135deg,#475569,#94a3b8)"},
+  {id:"wizard",emoji:"🧙",label:"Wizard",bg:"linear-gradient(135deg,#4338ca,#a855f7)"},
+  {id:"pirate",emoji:"🏴‍☠️",label:"Pirate",bg:"linear-gradient(135deg,#78350f,#d97706)"},
+  {id:"ghost",emoji:"👻",label:"Ghost",bg:"linear-gradient(135deg,#334155,#cbd5e1)"},
+  {id:"devil",emoji:"😈",label:"Devil",bg:"linear-gradient(135deg,#7f1d1d,#dc2626)"},
+  {id:"unicorn",emoji:"🦄",label:"Unicorn",bg:"linear-gradient(135deg,#db2777,#a78bfa)"},
+  {id:"skull",emoji:"💀",label:"Skull",bg:"linear-gradient(135deg,#1e1b4b,#6366f1)"},
+  {id:"fox",emoji:"🦊",label:"Fox",bg:"linear-gradient(135deg,#c2410c,#fb923c)"},
+  {id:"cat",emoji:"🐱",label:"Cat",bg:"linear-gradient(135deg,#854d0e,#fbbf24)"},
+];
+
 const T={en:{appName:"Bluffy",tagline:"Bluff your way to the win!",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back",howToPlay:"How to Play",howTitle:"How to Play Bluffy",howBody:"1. Create a room and share the code\n2. Each round, one player picks a category\n3. Everyone types their answer\n4. If CORRECT — write a convincing WRONG answer to fool others!\n5. All answers shuffled as multiple choice\n6. Everyone picks what they think is correct\n\nScoring:\n+2 for correct pick\n+1 per player your fake answer fools\n0 if you pick your own fake (self-fool!)\n\nMost points wins!",close:"Close"},
 he:{appName:"Bluffy",tagline:"!בלוף את דרכך עד לניצחון",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה",howToPlay:"איך משחקים",howTitle:"איך משחקים בבלאפי",howBody:"1. צרו חדר ושתפו את הקוד עם חברים\n2. כל סיבוב, שחקן בוחר קטגוריה\n3. כולם מקלידים תשובה\n4. אם נכון — כתבו תשובה שגויה משכנעת!\n5. כל התשובות מעורבבות כרב-ברירה\n6. כולם בוחרים את הנכונה\n\nניקוד:\n+2 על בחירה נכונה\n+1 לכל שחקן שהבלאף שלכם רימה\n0 אם בחרתם בבלאף שלכם!\n\nהכי הרבה נקודות מנצח!",close:"סגור"}};
 
@@ -283,6 +299,7 @@ export default function Bluffy(){
   const[room,setRoom]=useState(null);
   const[rd,setRd]=useState(null);
   const[myName,setMyName]=useState("");
+  const[myAvatar,setMyAvatar]=useState("ninja");
   const[joinCode,setJoinCode]=useState("");
   const[ci,setCi]=useState("");
   const[bi,setBi]=useState("");
@@ -399,7 +416,7 @@ export default function Bluffy(){
     const rr=ref(db,`rooms/${code}`);
     const ex=await get(rr);
     if(ex.exists())return createRoom();
-    await set(rr,{host:uid,lang,state:"lobby",round:0,turnIdx:0,settings:{time:30,rounds:10,cats:CATS},players:{[uid]:{name:myName.trim(),score:0,order:0}}});
+    await set(rr,{host:uid,lang,state:"lobby",round:0,turnIdx:0,settings:{time:30,rounds:10,cats:CATS},players:{[uid]:{name:myName.trim(),score:0,order:0,avatar:myAvatar}}});
     setRoom(code);
   };
 
@@ -412,7 +429,7 @@ export default function Bluffy(){
     const d=snap.val();
     if(d.players&&Object.keys(d.players).length>=5){setErr(t.roomFull||"Full");return;}
     if(d.players&&Object.values(d.players).some(p=>p.name===myName.trim())){setErr(t.nameTaken||"Name taken");return;}
-    await update(ref(db,`rooms/${code}/players/${uid}`),{name:myName.trim(),score:0,order:d.players?Object.keys(d.players).length:0});
+    await update(ref(db,`rooms/${code}/players/${uid}`),{name:myName.trim(),score:0,order:d.players?Object.keys(d.players).length:0,avatar:myAvatar});
     setRoom(code);setLang(d.lang||"en");
     window.history.replaceState({},"",window.location.pathname);
   };
@@ -643,6 +660,15 @@ update(ref(db,`rooms/${room}`),{
     <button onClick={leaveRoom} style={{...B,background:"rgba(255,59,48,.15)",color:"#FF6B6B",padding:"6px 14px",borderRadius:8,fontSize:12,fontWeight:600}}>{t.leave}</button>
   </div>;
 
+  const getAvatar=(id)=>AVATARS.find(a=>a.id===id)||AVATARS[0];
+  const PlayerAvatar=({avatarId,size=40})=>{const av=getAvatar(avatarId);return<div style={{width:size,height:size,borderRadius:"50%",background:av.bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*0.5,flexShrink:0,boxShadow:"0 4px 12px rgba(0,0,0,.3)",border:"2px solid rgba(255,255,255,.15)"}}>{av.emoji}</div>;};
+  const AvatarPicker=()=><div style={{marginBottom:16,width:280}}>
+    <p style={{color:"rgba(255,255,255,.5)",fontSize:12,textAlign:"center",margin:"0 0 8px",textTransform:"uppercase",letterSpacing:2}}>Choose Avatar</p>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:6}}>
+      {AVATARS.map(av=><button key={av.id} onClick={()=>setMyAvatar(av.id)} style={{...B,width:44,height:44,borderRadius:"50%",background:myAvatar===av.id?av.bg:"rgba(255,255,255,.06)",border:myAvatar===av.id?"2px solid #FFD700":"2px solid rgba(255,255,255,.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,padding:0,transform:myAvatar===av.id?"scale(1.15)":"scale(1)",boxShadow:myAvatar===av.id?"0 0 16px rgba(255,215,0,.4)":"none"}}>{av.emoji}</button>)}
+    </div>
+  </div>;
+
   const bg="linear-gradient(180deg,#0f0c29,#1a1a3e)";
 
   // ════════ HOME ════════
@@ -652,6 +678,7 @@ update(ref(db,`rooms/${room}`),{
     <h1 style={{fontSize:56,fontWeight:900,margin:0,background:"linear-gradient(135deg,#FFD700,#FF6B6B,#C084FC)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{t.appName}</h1>
     <p style={{color:"rgba(255,255,255,.6)",fontSize:18,marginTop:4,marginBottom:32,fontStyle:"italic"}}>{t.tagline}</p>
     <input value={myName} onChange={e=>setMyName(e.target.value)} placeholder={t.enterName} maxLength={12} style={{...I,width:260,textAlign:"center",fontSize:18,marginBottom:16}}/>
+    <AvatarPicker/>
     <button onClick={createRoom} style={{...B,background:"linear-gradient(135deg,#FFD700,#FFA500)",color:"#1a1a2e",fontSize:18,fontWeight:800,padding:"16px 0",borderRadius:14,width:260,marginBottom:12,boxShadow:"0 8px 32px rgba(255,215,0,.3)",opacity:myName.trim()?1:.4}}>{t.createGame}</button>
     <button onClick={()=>setPage("join")} style={{...B,background:"rgba(255,255,255,.1)",color:"#C084FC",fontSize:16,fontWeight:700,padding:"14px 0",borderRadius:14,width:260}}>{t.joinGame}</button>
     <button onClick={()=>setShowHelp(true)} style={{...B,background:"transparent",color:"rgba(255,255,255,.5)",fontSize:14,fontWeight:600,padding:"12px 0",width:260,marginTop:8}}>❓ {t.howToPlay}</button>
@@ -672,6 +699,7 @@ update(ref(db,`rooms/${room}`),{
     <div style={{fontSize:64,marginBottom:16}}>🃏</div>
     <h2 style={{color:"#FFD700",fontSize:28,marginBottom:24}}>{t.joinGame}</h2>
     <input value={myName} onChange={e=>setMyName(e.target.value)} placeholder={t.enterName} maxLength={12} style={{...I,width:260,textAlign:"center",fontSize:18,marginBottom:12}}/>
+    <AvatarPicker/>
     <input value={joinCode} onChange={e=>setJoinCode(e.target.value.replace(/\D/g,""))} placeholder="000000" maxLength={6} style={{...I,width:240,textAlign:"center",fontSize:28,fontWeight:800,letterSpacing:8,marginBottom:16}} inputMode="numeric"/>
     {err&&<p style={{color:"#f87171",marginBottom:12,fontSize:14}}>{err}</p>}
     <button onClick={joinRoom} style={{...B,background:"linear-gradient(135deg,#C084FC,#818CF8)",color:"#fff",fontSize:18,fontWeight:700,padding:"14px 50px",borderRadius:14,opacity:myName.trim()&&joinCode.length===6?1:.4}}>{t.join}</button>
@@ -696,8 +724,8 @@ update(ref(db,`rooms/${room}`),{
     <div style={{...C,marginBottom:16}}>
       <h3 style={{color:"#C084FC",margin:"0 0 12px",fontSize:14,textTransform:"uppercase",letterSpacing:2}}>{t.players} ({playerCount}/5)</h3>
       {playerList.map(([id,p],i)=><div key={id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px",background:id===uid?"rgba(192,132,252,.08)":"rgba(255,255,255,.05)",borderRadius:10,marginBottom:6,border:id===uid?"1px solid rgba(192,132,252,.2)":"1px solid rgba(255,255,255,.08)"}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <span style={{fontSize:20}}>{EMO[i]||"🎮"}</span><span style={{color:"#fff",fontWeight:600}}>{p.name}{id===uid?" (You)":""}</span>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <PlayerAvatar avatarId={p.avatar} size={36}/><span style={{color:"#fff",fontWeight:600}}>{p.name}{id===uid?" (You)":""}</span>
           {id===rd.host&&<span style={{background:"rgba(255,215,0,.2)",color:"#FFD700",fontSize:10,padding:"2px 8px",borderRadius:6,fontWeight:700}}>{t.host}</span>}
         </div>
         {isHost&&id!==uid&&<button onClick={()=>kickPlayer(id)} style={{...B,background:"rgba(255,59,48,.2)",color:"#FF3B30",borderRadius:8,padding:"4px 10px",fontSize:11,fontWeight:600}}>{t.kick}</button>}
@@ -793,76 +821,137 @@ update(ref(db,`rooms/${room}`),{
   </div></div>);}
 
   // ════════ REVEAL ════════
+  const OPT_LETTERS=["A","B","C","D","E","F","G","H"];
+  const OPT_COLORS=["#C084FC","#FFD700","#4ade80","#f87171","#38bdf8","#fb923c","#e879f9","#facc15"];
   if(state==="reveal"&&rd?.options)return(<div style={{minHeight:"100vh",background:bg,padding:20,direction:he?"rtl":"ltr"}}><div style={{maxWidth:500,margin:"0 auto"}}>
     <TopBar/><RB/>
-    {rd?.revealDeadline&&<div style={{textAlign:"center",marginBottom:12}}>
-      <span style={{color:revealTimer<=5?"#f87171":"#FFD700",fontSize:32,fontWeight:900}}>{revealTimer}</span>
-      <span style={{color:"rgba(255,255,255,.4)",fontSize:12,marginInlineStart:8}}>{t.timerLabel}</span>
+    {rd?.revealDeadline&&<div style={{textAlign:"center",marginBottom:16}}>
+      <div style={{display:"inline-flex",alignItems:"center",gap:10,background:revealTimer<=5?"rgba(248,113,113,.15)":"rgba(255,215,0,.1)",border:revealTimer<=5?"1px solid rgba(248,113,113,.3)":"1px solid rgba(255,215,0,.2)",borderRadius:30,padding:"8px 24px"}}>
+        <div style={{width:40,height:40,borderRadius:"50%",background:revealTimer<=5?"rgba(248,113,113,.2)":"rgba(255,215,0,.15)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <span style={{color:revealTimer<=5?"#f87171":"#FFD700",fontSize:22,fontWeight:900}}>{revealTimer}</span>
+        </div>
+        <span style={{color:"rgba(255,255,255,.5)",fontSize:13,fontWeight:600}}>{t.timerLabel}</span>
+      </div>
     </div>}
-    <div style={{...C,marginBottom:16,textAlign:"center",borderColor:"rgba(255,215,0,.2)"}}>
+    <div style={{...C,marginBottom:20,textAlign:"center",borderColor:"rgba(255,215,0,.25)",background:"rgba(255,215,0,.04)"}}>
+      <span style={{fontSize:11,color:"rgba(255,255,255,.4)",textTransform:"uppercase",letterSpacing:2}}>{t[rd.question?.category]} {rd.question?.difficulty?`• ${rd.question.difficulty}`:""}</span>
       {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code}/>}
-      <p style={{color:"#fff",fontSize:18,fontWeight:700,margin:0}}>{QT()}</p>
+      <p style={{color:"#fff",fontSize:20,fontWeight:700,margin:"10px 0 0",lineHeight:1.4}}>{QT()}</p>
     </div>
     {!selected?(<div>
-      <p style={{textAlign:"center",color:"#C084FC",fontSize:14,fontWeight:600,marginBottom:12}}>{t.choose}</p>
-      {rd.options.map((o,i)=><button key={i} onClick={()=>selectOption(i)} style={{display:"block",width:"100%",padding:"16px 20px",marginBottom:8,background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.12)",borderRadius:14,textAlign:he?"right":"left",...B}}>
-        <span style={{color:"#fff",fontSize:17,fontWeight:600}}>{o.text}</span>
+      <p style={{textAlign:"center",color:"#C084FC",fontSize:15,fontWeight:700,marginBottom:16,letterSpacing:1}}>🎯 {t.choose}</p>
+      <div style={{display:"grid",gridTemplateColumns:rd.options.length<=4?"1fr":"1fr 1fr",gap:10}}>
+      {rd.options.map((o,i)=><button key={i} onClick={()=>selectOption(i)} style={{display:"flex",alignItems:"center",gap:12,width:"100%",padding:"14px 16px",background:"rgba(255,255,255,.05)",border:`2px solid ${OPT_COLORS[i%8]}22`,borderRadius:16,textAlign:he?"right":"left",...B,position:"relative",overflow:"hidden"}}>
+        <div style={{width:36,height:36,borderRadius:10,background:`${OPT_COLORS[i%8]}20`,border:`1px solid ${OPT_COLORS[i%8]}44`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          <span style={{color:OPT_COLORS[i%8],fontSize:16,fontWeight:800}}>{OPT_LETTERS[i]}</span>
+        </div>
+        <span style={{color:"#fff",fontSize:16,fontWeight:600,lineHeight:1.3}}>{o.text}</span>
       </button>)}
-    </div>):(<div style={{...C,textAlign:"center"}}>
-      <div style={{fontSize:48}}>⏳</div><p style={{color:"rgba(255,255,255,.5)",marginTop:8}}>{t.waiting}</p>
-      <div style={{display:"flex",justifyContent:"center",gap:8,marginTop:12}}>
-        {playerList.map(([id,p],i)=>{const d=rd?.selections?.[id]!==undefined;return<div key={id} style={{width:36,height:36,borderRadius:10,background:d?"rgba(74,222,128,.2)":"rgba(255,255,255,.05)",border:d?"1px solid rgba(74,222,128,.4)":"1px solid rgba(255,255,255,.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:d?"#4ade80":"rgba(255,255,255,.4)"}}>{d?"✓":p.name[0]}</div>;})}
+      </div>
+    </div>):(<div style={{...C,textAlign:"center",borderColor:"rgba(192,132,252,.2)",background:"rgba(192,132,252,.04)"}}>
+      <div style={{fontSize:48,marginBottom:4}}>🤔</div>
+      <p style={{color:"#C084FC",fontWeight:700,fontSize:16,margin:"0 0 4px"}}>{he?"בחרת!":"Locked in!"}</p>
+      <p style={{color:"rgba(255,255,255,.4)",fontSize:13}}>{t.waiting}</p>
+      <div style={{display:"flex",justifyContent:"center",gap:8,marginTop:16}}>
+        {playerList.map(([id,p],i)=>{const d=rd?.selections?.[id]!==undefined;return<div key={id} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+          <div style={{width:40,height:40,borderRadius:12,background:d?"rgba(74,222,128,.15)":"rgba(255,255,255,.05)",border:d?"2px solid rgba(74,222,128,.4)":"2px solid rgba(255,255,255,.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:d?"#4ade80":"rgba(255,255,255,.3)",transition:"all .3s"}}>{d?"✓":EMO[i]||"🎮"}</div>
+          <span style={{color:d?"#4ade80":"rgba(255,255,255,.3)",fontSize:10,fontWeight:600,maxWidth:48,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.name}</span>
+        </div>;})}
       </div>
     </div>)}
   </div></div>);
 
   // ════════ POST ROUND ════════
-  if(state==="post"&&rd?.results){const sorted=[...playerList].sort((a,b)=>(b[1].score||0)-(a[1].score||0));return(<div style={{minHeight:"100vh",background:bg,padding:20,direction:he?"rtl":"ltr"}}><div style={{maxWidth:500,margin:"0 auto"}}>
+  if(state==="post"&&rd?.results){const sorted=[...playerList].sort((a,b)=>(b[1].score||0)-(a[1].score||0));const maxScore=Math.max(1,...sorted.map(([,p])=>p.score||0));return(<div style={{minHeight:"100vh",background:bg,padding:20,direction:he?"rtl":"ltr"}}><div style={{maxWidth:500,margin:"0 auto"}}>
     <TopBar/><RB/>
-    <div style={{...C,marginBottom:16,textAlign:"center",borderColor:"rgba(74,222,128,.3)",background:"rgba(74,222,128,.05)"}}>
-      <span style={{fontSize:12,color:"rgba(255,255,255,.4)",textTransform:"uppercase",letterSpacing:2}}>{t.correct}</span>
+    {/* ── Correct Answer Banner ── */}
+    <div style={{...C,marginBottom:20,textAlign:"center",borderColor:"rgba(74,222,128,.3)",background:"linear-gradient(135deg,rgba(74,222,128,.08),rgba(74,222,128,.02))",position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:-20,right:-20,fontSize:80,opacity:.06}}>✓</div>
+      <span style={{fontSize:12,color:"rgba(255,255,255,.4)",textTransform:"uppercase",letterSpacing:3,fontWeight:700}}>{t.correct}</span>
       {(rd.question?.flag_country||rd.question?.flag_code)&&<FI c={rd.question.flag_country} code={rd.question.flag_code}/>}
-      <p style={{color:"#4ade80",fontSize:24,fontWeight:800,margin:"8px 0"}}>{rd.correctAnswer}</p>
+      <p style={{color:"#4ade80",fontSize:28,fontWeight:900,margin:"8px 0 0",textShadow:"0 0 20px rgba(74,222,128,.3)"}}>{rd.correctAnswer}</p>
     </div>
-    {playerList.map(([id,p],i)=>{const r=rd.results[id]||{};const oi=rd.selections?.[id];const pk=rd.options?.[oi];
-      const pkIsSys=Array.isArray(pk?.ai)&&(pk.ai.length===0||(pk.ai.length===1&&pk.ai[0]==="sys"));
-      const pkNames=Array.isArray(pk?.an)?pk.an.join(", "):"";
-      return<div key={id} style={{...C,marginBottom:8,padding:"12px 16px",borderColor:r.e>0?"rgba(255,215,0,.2)":"rgba(255,255,255,.06)"}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <div style={{display:"flex",alignItems:"center",gap:10,flex:1,minWidth:0}}>
-          <span style={{fontSize:22}}>{EMO[i]||"🎮"}</span>
-          <div style={{minWidth:0}}>
-            <p style={{color:"#fff",fontWeight:700,margin:0,fontSize:14}}>{p.name}</p>
-            <p style={{color:pk?.ok?"#4ade80":"#f87171",fontSize:12,margin:"2px 0 0"}}>{pk?.ok?"✓ ":"✗ "}{pk?.text||"—"}{r.sf?<span style={{color:"#FFA500",marginInlineStart:6}}>({t.selfFool})</span>:""}</p>
-            {!pk?.ok&&!pkIsSys&&pkNames&&<p style={{color:"rgba(255,255,255,.3)",fontSize:11}}>{t.wroteBy} {pkNames}</p>}
-            {r.fb?.length>0&&<p style={{color:"#C084FC",fontSize:11}}>{t.fooled} {r.fb.length}: {r.fb.join(", ")}</p>}
+
+    {/* ── Per-Player Results ── */}
+    <div style={{marginBottom:20}}>
+      <h3 style={{color:"#C084FC",fontSize:12,textTransform:"uppercase",letterSpacing:3,margin:"0 0 12px",fontWeight:700}}>📊 {he?"תוצאות הסיבוב":"Round Results"}</h3>
+      {playerList.map(([id,p],i)=>{const r=rd.results[id]||{};const oi=rd.selections?.[id];const pk=rd.options?.[oi];
+        const pkIsSys=Array.isArray(pk?.ai)&&(pk.ai.length===0||(pk.ai.length===1&&pk.ai[0]==="sys"));
+        const pkNames=Array.isArray(pk?.an)?pk.an.join(", "):"";
+        const isCorrectPick=pk?.ok;
+        return<div key={id} style={{...C,marginBottom:10,padding:"14px 16px",borderColor:isCorrectPick?"rgba(74,222,128,.25)":r.sf?"rgba(255,165,0,.25)":"rgba(255,255,255,.06)",background:isCorrectPick?"rgba(74,222,128,.04)":r.sf?"rgba(255,165,0,.04)":"rgba(255,255,255,.02)",transition:"all .3s"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:38,height:38,borderRadius:12,background:isCorrectPick?"rgba(74,222,128,.15)":"rgba(255,255,255,.06)",border:isCorrectPick?"2px solid rgba(74,222,128,.3)":"2px solid rgba(255,255,255,.08)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <span style={{fontSize:18}}>{EMO[i]||"🎮"}</span>
+            </div>
+            <div>
+              <p style={{color:"#fff",fontWeight:700,margin:0,fontSize:15}}>{p.name}{id===uid?<span style={{color:"rgba(255,255,255,.3)",fontSize:11,marginInlineStart:6}}>(You)</span>:""}</p>
+            </div>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            {r.e>0&&<div style={{background:r.e>=2?"linear-gradient(135deg,#FFD700,#FFA500)":"rgba(255,215,0,.15)",color:r.e>=2?"#1a1a2e":"#FFD700",padding:"4px 12px",borderRadius:20,fontSize:16,fontWeight:900}}>+{r.e}</div>}
+            {r.e===0&&<div style={{color:"rgba(255,255,255,.25)",fontSize:14,fontWeight:600}}>+0</div>}
           </div>
         </div>
-        <span style={{color:r.e>0?"#FFD700":"rgba(255,255,255,.3)",fontSize:22,fontWeight:900,minWidth:45,textAlign:"center"}}>+{r.e||0}</span>
-      </div>
-      {isHost&&id!==uid&&<button onClick={()=>kickPlayer(id)} style={{...B,background:"rgba(255,59,48,.1)",color:"#FF6B6B",padding:"3px 10px",borderRadius:6,fontSize:10,marginTop:6}}>{t.kick}</button>}
-    </div>;})}
-    <div style={{...C,margin:"12px 0 16px"}}>
-      <p style={{color:"rgba(255,255,255,.4)",fontSize:12,textTransform:"uppercase",letterSpacing:1,margin:"0 0 8px"}}>{t.allAns}</p>
+        <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:"rgba(255,255,255,.03)",borderRadius:10,marginBottom:4}}>
+          <span style={{fontSize:12,color:"rgba(255,255,255,.4)",flexShrink:0}}>{he?"בחר/ה:":"Picked:"}</span>
+          <span style={{color:isCorrectPick?"#4ade80":"#f87171",fontWeight:600,fontSize:14}}>{isCorrectPick?"✓":"✗"} {pk?.text||"—"}</span>
+        </div>
+        {r.sf&&<div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(255,165,0,.08)",borderRadius:10,marginTop:4}}>
+          <span style={{fontSize:14}}>🤦</span>
+          <span style={{color:"#FFA500",fontSize:12,fontWeight:600}}>{t.selfFool}</span>
+        </div>}
+        {!isCorrectPick&&!pkIsSys&&pkNames&&<div style={{display:"flex",alignItems:"center",gap:6,padding:"4px 12px",marginTop:2}}>
+          <span style={{color:"rgba(255,255,255,.25)",fontSize:11}}>✍️ {t.wroteBy} <span style={{color:"rgba(255,255,255,.5)",fontWeight:600}}>{pkNames}</span></span>
+        </div>}
+        {r.fb?.length>0&&<div style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",background:"rgba(192,132,252,.06)",borderRadius:10,marginTop:4}}>
+          <span style={{fontSize:14}}>😈</span>
+          <span style={{color:"#C084FC",fontSize:12,fontWeight:600}}>{t.fooled} {r.fb.length}: {r.fb.join(", ")}</span>
+        </div>}
+        {isHost&&id!==uid&&<button onClick={()=>kickPlayer(id)} style={{...B,background:"rgba(255,59,48,.1)",color:"#FF6B6B",padding:"3px 10px",borderRadius:6,fontSize:10,marginTop:6}}>{t.kick}</button>}
+      </div>;})}
+    </div>
+
+    {/* ── All Answers Breakdown ── */}
+    <div style={{...C,margin:"0 0 20px",borderColor:"rgba(255,255,255,.08)"}}>
+      <h3 style={{color:"rgba(255,255,255,.5)",fontSize:12,textTransform:"uppercase",letterSpacing:2,margin:"0 0 12px",fontWeight:600}}>{t.allAns}</h3>
       {(rd.options||[]).map((o,i)=>{
         const isSys=Array.isArray(o.ai)&&(o.ai.length===0||(o.ai.length===1&&o.ai[0]==="sys"));
         const names=Array.isArray(o.an)?o.an.join(", "):"";
-        return<div key={i} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:i<rd.options.length-1?"1px solid rgba(255,255,255,.05)":"none"}}>
-        <span style={{color:o.ok?"#4ade80":"#fff",fontWeight:o.ok?700:400,fontSize:13}}>{o.ok?"✓ ":""}{o.text}</span>
-        <span style={{color:"rgba(255,255,255,.3)",fontSize:11}}>{o.ok?t.correct:isSys?t.auto:names}</span>
+        const pickedBy=Object.entries(rd.selections||{}).filter(([,idx])=>idx===i).map(([pid])=>rd.players?.[pid]?.name||"?");
+        return<div key={i} style={{padding:"10px 12px",marginBottom:6,background:o.ok?"rgba(74,222,128,.06)":"rgba(255,255,255,.02)",border:o.ok?"1px solid rgba(74,222,128,.15)":"1px solid rgba(255,255,255,.04)",borderRadius:12}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <span style={{width:24,height:24,borderRadius:6,background:o.ok?"rgba(74,222,128,.2)":"rgba(255,255,255,.06)",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:o.ok?"#4ade80":"rgba(255,255,255,.4)"}}>{OPT_LETTERS[i]}</span>
+            <span style={{color:o.ok?"#4ade80":"#fff",fontWeight:o.ok?700:500,fontSize:14}}>{o.text}</span>
+          </div>
+          <span style={{color:"rgba(255,255,255,.3)",fontSize:11,fontWeight:600}}>{o.ok?"✓ "+t.correct:isSys?"🤖 "+t.auto:"✍️ "+names}</span>
+        </div>
+        {pickedBy.length>0&&<div style={{marginTop:6,display:"flex",gap:4,flexWrap:"wrap"}}>
+          {pickedBy.map((n,j)=><span key={j} style={{background:o.ok?"rgba(74,222,128,.1)":"rgba(248,113,113,.1)",color:o.ok?"#4ade80":"#f87171",fontSize:10,padding:"2px 8px",borderRadius:12,fontWeight:600}}>👆 {n}</span>)}
+        </div>}
       </div>;})}
     </div>
-    <div style={{...C,marginBottom:20}}>
-      <h3 style={{color:"#FFD700",margin:"0 0 10px",fontSize:15,textAlign:"center"}}>{t.scoreboard}</h3>
-      {sorted.map(([id,p],i)=><div key={id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"7px 12px",background:i===0?"rgba(255,215,0,.08)":"transparent",borderRadius:10,marginBottom:3}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <span style={{color:i===0?"#FFD700":i===1?"#C0C0C0":"#CD7F32",fontWeight:800,fontSize:17}}>#{i+1}</span>
-          <span style={{color:"#fff",fontWeight:600,fontSize:14}}>{p.name}</span>
+
+    {/* ── Score Bar Chart ── */}
+    <div style={{...C,marginBottom:20,borderColor:"rgba(255,215,0,.12)"}}>
+      <h3 style={{color:"#FFD700",margin:"0 0 14px",fontSize:15,textAlign:"center",fontWeight:800}}>🏆 {t.scoreboard}</h3>
+      {sorted.map(([id,p],i)=>{const pct=maxScore>0?((p.score||0)/maxScore)*100:0;return<div key={id} style={{marginBottom:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <span style={{color:i===0?"#FFD700":i===1?"#C0C0C0":i===2?"#CD7F32":"rgba(255,255,255,.5)",fontWeight:900,fontSize:16,minWidth:26}}>#{i+1}</span>
+            <span style={{color:"#fff",fontWeight:600,fontSize:14}}>{p.name}</span>
+          </div>
+          <span style={{color:"#FFD700",fontWeight:900,fontSize:18}}>{p.score||0}</span>
         </div>
-        <span style={{color:"#FFD700",fontWeight:800,fontSize:18}}>{p.score||0}</span>
-      </div>)}
+        <div style={{height:8,borderRadius:4,background:"rgba(255,255,255,.06)",overflow:"hidden"}}>
+          <div style={{height:"100%",borderRadius:4,background:i===0?"linear-gradient(90deg,#FFD700,#FFA500)":i===1?"linear-gradient(90deg,#C0C0C0,#A0A0A0)":"linear-gradient(90deg,#CD7F32,#B87333)",width:`${pct}%`,transition:"width .8s ease-out"}}/>
+        </div>
+      </div>;})}
     </div>
-    {isHost?<button onClick={nextRound} style={{...B,width:"100%",background:"linear-gradient(135deg,#FFD700,#FFA500)",color:"#1a1a2e",fontSize:18,fontWeight:800,padding:"16px 0",borderRadius:14}}>{(rd?.round||1)>=(rd?.settings?.rounds||10)?t.over:t.next}</button>
+
+    {isHost?<button onClick={nextRound} style={{...B,width:"100%",background:"linear-gradient(135deg,#FFD700,#FFA500)",color:"#1a1a2e",fontSize:18,fontWeight:800,padding:"16px 0",borderRadius:14,boxShadow:"0 8px 32px rgba(255,215,0,.2)"}}>{(rd?.round||1)>=(rd?.settings?.rounds||10)?t.over:t.next} →</button>
     :<p style={{textAlign:"center",color:"rgba(255,255,255,.4)",fontSize:14}}>{t.waiting}</p>}
   </div></div>);}
 
