@@ -870,31 +870,7 @@ update(ref(db,`rooms/${room}`),{
 
   const bg="linear-gradient(180deg,#0f0c29,#1a1a3e)";
   const FloatingLegalButton = () => (
-  <button
-    onClick={() => {
-      setLegalTab("terms");
-      setShowLegal(true);
-    }}
-    style={{
-      position: "fixed",
-      top: 14,
-      [he ? "left" : "right"]: 14,
-      zIndex: 1000,
-      background: "rgba(15,12,41,.88)",
-      color: "#FFD700",
-      border: "1px solid rgba(255,215,0,.25)",
-      borderRadius: 999,
-      padding: "10px 14px",
-      fontSize: 12,
-      fontWeight: 800,
-      boxShadow: "0 8px 24px rgba(0,0,0,.35)",
-      backdropFilter: "blur(8px)",
-      WebkitBackdropFilter: "blur(8px)",
-      cursor: "pointer"
-    }}
-  >
-    📄 {t.legal}
-  </button>
+
 );
   const LegalModal = () =>
   showLegal ? (
@@ -1194,6 +1170,26 @@ update(ref(db,`rooms/${room}`),{
     <button onClick={createRoom} style={{...B,background:"linear-gradient(135deg,#FFD700,#FFA500)",color:"#1a1a2e",fontSize:18,fontWeight:800,padding:"16px 0",borderRadius:14,width:260,marginBottom:12,boxShadow:"0 8px 32px rgba(255,215,0,.3)",opacity:myName.trim()?1:.4}}>{t.createGame}</button>
     <button onClick={()=>setPage("join")} style={{...B,background:"rgba(255,255,255,.1)",color:"#C084FC",fontSize:16,fontWeight:700,padding:"14px 0",borderRadius:14,width:260}}>{t.joinGame}</button>
     <button onClick={()=>setShowHelp(true)} style={{...B,background:"transparent",color:"rgba(255,255,255,.5)",fontSize:14,fontWeight:600,padding:"12px 0",width:260,marginTop:8}}>❓ {t.howToPlay}</button>
+    <button
+  onClick={() => {
+    setLegalTab("terms");
+    setShowLegal(true);
+  }}
+  style={{
+    ...B,
+    background: "transparent",
+    color: "#FFD700",
+    fontSize: 12,
+    fontWeight: 700,
+    padding: "6px 0",
+    width: 260,
+    marginTop: 2,
+    textDecoration: "underline",
+    letterSpacing: 0.3
+  }}
+>
+  📄 {t.legal}
+</button>
     {showHelp&&<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.8)",zIndex:999,display:"flex",alignItems:"center",justifyContent:"center",padding:20}} onClick={()=>setShowHelp(false)}>
       <div style={{background:"#1a1a3e",borderRadius:20,padding:24,maxWidth:400,width:"100%",maxHeight:"80vh",overflow:"auto",border:"1px solid rgba(255,215,0,.2)"}} onClick={e=>e.stopPropagation()}>
         <h2 style={{color:"#FFD700",fontSize:22,margin:"0 0 16px",textAlign:"center"}}>{t.howTitle}</h2>
