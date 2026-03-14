@@ -30,8 +30,8 @@ const AVATARS=[
   {id:"cat",emoji:"🐱",label:"Cat",bg:"linear-gradient(135deg,#854d0e,#fbbf24)"},
 ];
 
-const T={en:{appName:"Bluffy",tagline:"Bluff your way to the win!",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back",howToPlay:"How to Play",howTitle:"How to Play Bluffy",howBody:"1. Create a room and share the code\n2. Each round, one player picks a category\n3. Everyone types their answer\n4. If CORRECT — write a convincing WRONG answer to fool others!\n5. All answers shuffled as multiple choice\n6. Everyone picks what they think is correct\n\nScoring:\n+2 for correct pick\n+1 per player your fake answer fools\n0 if you pick your own fake (self-fool!)\n\nMost points wins!",close:"Close"},
-he:{appName:"Bluffy",tagline:"!בלוף את דרכך עד לניצחון",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה",howToPlay:"איך משחקים",howTitle:"איך משחקים בבלאפי",howBody:"1. צרו חדר ושתפו את הקוד עם חברים\n2. כל סיבוב, שחקן בוחר קטגוריה\n3. כולם מקלידים תשובה\n4. אם נכון — כתבו תשובה שגויה משכנעת!\n5. כל התשובות מעורבבות כרב-ברירה\n6. כולם בוחרים את הנכונה\n\nניקוד:\n+2 על בחירה נכונה\n+1 לכל שחקן שהבלאף שלכם רימה\n0 אם בחרתם בבלאף שלכם!\n\nהכי הרבה נקודות מנצח!",close:"סגור"}};
+const T={en:{appName:"Bluffy",tagline:"Bluff your way to the win!",createGame:"Create Game",joinGame:"Join Game",enterName:"Your name",enterCode:"Room code",join:"Join",start:"Start Game!",players:"Players",settings:"Settings",time:"Time/question",sec:"sec",rounds:"Rounds",cats:"Categories",all:"All",none:"None",pickCat:"Pick a Category!",turn:"'s turn",typeAns:"Type answer...",submit:"Submit",waiting:"Waiting for others...",bluffMsg:"Correct! Type a plausible WRONG answer.",typeBluff:"Fake answer...",sendBluff:"Submit Bluff",skip:"Skip",choose:"Pick the correct answer",round:"Round",of:"of",pts:"pts",correct:"Correct",fooled:"fooled",scoreboard:"Scoreboard",next:"Next Round",over:"Game Over!",winner:"Winner!",again:"Play Again",menu:"Menu",kick:"Kick",leave:"Leave",host:"Host",wroteBy:"by",selfFool:"picked own bluff!",flag:"Which country's flag?",allAns:"All Answers",auto:"Auto",share:"Share code:",or:"or scan QR:",copied:"Copied!",copy:"Copy Link",waitHost:"Waiting for host...",youAnswered:"Answer submitted!",general_knowledge:"General Knowledge",history:"History",geography:"Geography",flags:"Flags",movies:"Movies",cartoons:"Cartoons",famous:"Famous People",sport:"Sport",football:"Football",fashion:"Fashion",strange_questions:"Strange Q's",science:"Science",timerLabel:"sec left",back:"Back",howToPlay:"How to Play",howTitle:"How to Play Bluffy",howBody:"1. Create a room and share the code\n2. Each round, one player picks a category\n3. Everyone types their answer\n4. If CORRECT — write a convincing WRONG answer to fool others!\n5. All answers shuffled as multiple choice\n6. Everyone picks what they think is correct\n\nScoring:\n+2 for correct pick\n+1 per player your fake answer fools\n0 if you pick your own fake (self-fool!)\n\nMost points wins!",close:"Close",legal:"Terms & Privacy",terms:"Terms",privacy:"Privacy Policy",termsTitle:"Terms of Use",privacyTitle:"Privacy Policy"},
+he:{appName:"Bluffy",tagline:"!בלוף את דרכך עד לניצחון",createGame:"צור משחק",joinGame:"הצטרף",enterName:"השם שלך",enterCode:"קוד חדר",join:"הצטרף",start:"!התחל",players:"שחקנים",settings:"הגדרות",time:"זמן/שאלה",sec:"שנ׳",rounds:"סיבובים",cats:"קטגוריות",all:"הכל",none:"כלום",pickCat:"!בחר קטגוריה",turn:" בוחר/ת",typeAns:"...הקלד תשובה",submit:"שלח",waiting:"...ממתינים",bluffMsg:"!נכון! הקלד תשובה שגויה משכנעת",typeBluff:"...מזויפת",sendBluff:"שלח בלאף",skip:"דלג",choose:"?מה נכון",round:"סיבוב",of:"מתוך",pts:"נק׳",correct:"נכון",fooled:"רימה",scoreboard:"ניקוד",next:"הבא",over:"!נגמר",winner:"!מנצח",again:"שוב",menu:"תפריט",kick:"הסר",leave:"עזוב",host:"מארח",wroteBy:"ע\"י",selfFool:"!בלאף עצמי",flag:"לאיזו מדינה שייך הדגל?",allAns:"כל התשובות",auto:"אוטו",share:"שתפו:",or:"או QR:",copied:"!הועתק",copy:"העתק",waitHost:"...ממתינים למארח",youAnswered:"!נשלח",general_knowledge:"ידע כללי",history:"היסטוריה",geography:"גיאוגרפיה",flags:"דגלים",movies:"סרטים",cartoons:"קריקטורות",famous:"מפורסמים",sport:"ספורט",football:"כדורגל",fashion:"אופנה",strange_questions:"שאלות מוזרות",science:"מדע",timerLabel:"שנ׳ נותרו",back:"חזרה",howToPlay:"איך משחקים",howTitle:"איך משחקים בבלאפי",howBody:"1. צרו חדר ושתפו את הקוד עם חברים\n2. כל סיבוב, שחקן בוחר קטגוריה\n3. כולם מקלידים תשובה\n4. אם נכון — כתבו תשובה שגויה משכנעת!\n5. כל התשובות מעורבבות כרב-ברירה\n6. כולם בוחרים את הנכונה\n\nניקוד:\n+2 על בחירה נכונה\n+1 לכל שחקן שהבלאף שלכם רימה\n0 אם בחרתם בבלאף שלכם!\n\nהכי הרבה נקודות מנצח!",close:"סגור",legal:"תקנון ופרטיות",terms:"תקנון",privacy:"מדיניות פרטיות",termsTitle:"תקנון שימוש",privacyTitle:"מדיניות פרטיות"}};
 
 
 // ═══════════════════════════════════════════════════════════
@@ -291,7 +291,184 @@ function genMultipleDecoys(q,existingTexts,ln,count){
 
 function genCode(){let r="";for(let i=0;i<6;i++)r+=Math.floor(Math.random()*10);if(r[0]==="0")r="1"+r.slice(1);return r;}
 function genUid(){return"u"+Math.random().toString(36).slice(2,10)+Date.now().toString(36);}
+const LEGAL = {
+  en: {
+    terms: `
+Bluffy – Terms of Use
 
+Last updated: [ADD DATE]
+
+1. General
+Bluffy is a trivia game intended for entertainment purposes only.
+By using the app, you agree to these Terms of Use.
+
+2. Operator
+Bluffy is operated by a private operator based in Israel.
+Contact: [ADD CONTACT EMAIL OR CONTACT METHOD]
+
+3. Use of the App
+The app does not require registration or account creation.
+The app currently does not include payments or in-app purchases.
+The app is provided on an "AS IS" basis.
+
+4. Children
+The app is intended for a general audience, including children.
+Parents or legal guardians are responsible for supervising minors’ use of the app.
+
+5. Content
+The app includes trivia questions and answers.
+We make reasonable efforts to provide accurate content, but do not guarantee that all content will always be correct, complete, or up to date.
+
+6. Prohibited Use
+You may not misuse the app, interfere with its operation, attempt to bypass technical limitations, or copy/distribute app content without permission.
+
+7. Intellectual Property
+All rights in the app, including its design, text, questions, graphics, and branding, belong to the operator and/or relevant rights holders.
+
+8. Availability
+We do not guarantee uninterrupted or error-free operation of the app.
+We may update, change, suspend, or discontinue the app at any time.
+
+9. Limitation of Liability
+Use of the app is at your own responsibility.
+The operator will not be liable for damages resulting from use of the app, reliance on its content, or inability to use it, subject to applicable law.
+
+10. Governing Law
+These terms are governed by the laws of the State of Israel.
+Exclusive jurisdiction: competent courts in Haifa District, Israel.
+
+11. Apple Disclaimer
+This app is not sponsored, endorsed, administered by, or associated with Apple Inc.
+Apple is not responsible for the app or its content.
+`,
+    privacy: `
+Bluffy – Privacy Policy
+
+Last updated: [ADD DATE]
+
+1. General
+Your privacy matters to us. This Privacy Policy explains, in a simple way, what information may or may not be collected when you use Bluffy.
+
+2. No Account / No Registration
+Bluffy does not require you to create an account or register in order to play.
+
+3. Personal Information
+Bluffy does not intentionally ask users to provide personal information for normal gameplay.
+
+4. Gameplay History
+Bluffy does not aim to keep a personal gameplay history tied to user identity.
+
+5. Analytics
+At this time, Bluffy does not use analytics tools.
+If analytics tools are added in the future, this policy will be updated accordingly.
+
+6. Advertising
+At this time, Bluffy does not display ads.
+If ads are added in the future, third-party ad providers may collect technical data according to their own policies.
+
+7. Technical Data
+App stores, device operating systems, hosting services, or technical service providers may automatically process limited technical information needed for operation, security, or delivery of the service.
+
+8. Children
+Because the app may be used by children, we aim to minimize data collection as much as possible.
+
+9. Changes
+We may update this Privacy Policy from time to time. The most current version will appear in the app.
+
+10. Contact
+For privacy-related questions:
+[ADD CONTACT EMAIL OR CONTACT METHOD]
+`
+  },
+  he: {
+    terms: `
+Bluffy – תקנון שימוש
+
+עודכן לאחרונה: [להוסיף תאריך]
+
+1. כללי
+Bluffy היא אפליקציית טריוויה המיועדת למטרות בידור והנאה בלבד.
+השימוש באפליקציה מהווה הסכמה לתנאי תקנון זה.
+
+2. המפעיל
+האפליקציה מופעלת על ידי מפעיל פרטי מישראל.
+יצירת קשר: [להוסיף כתובת מייל או דרך יצירת קשר]
+
+3. אופן השימוש
+אין צורך בהרשמה או ביצירת חשבון כדי להשתמש באפליקציה.
+האפליקציה אינה כוללת כיום תשלומים או רכישות בתוך האפליקציה.
+האפליקציה ניתנת לשימוש כפי שהיא ("AS IS").
+
+4. קטינים
+האפליקציה מיועדת לקהל כללי, לרבות ילדים.
+האחריות לפיקוח על שימוש קטינים באפליקציה חלה על הוריהם או האפוטרופוסים שלהם.
+
+5. תוכן
+האפליקציה כוללת שאלות ותשובות טריוויה.
+נעשה מאמץ סביר להציג תוכן נכון, אך אין התחייבות שכל התוכן יהיה מדויק, מלא או מעודכן בכל עת.
+
+6. שימוש אסור
+אין לעשות שימוש לרעה באפליקציה, לשבש את פעולתה, לעקוף מגבלות טכניות, או להעתיק / להפיץ את תוכן האפליקציה ללא רשות.
+
+7. קניין רוחני
+כל הזכויות באפליקציה, לרבות עיצוב, טקסטים, שאלות, גרפיקה ומיתוג, שייכות למפעיל ו/או לבעלי הזכויות הרלוונטיים.
+
+8. זמינות
+אין התחייבות שהאפליקציה תפעל ללא תקלות או ללא הפרעות.
+המפעיל רשאי לעדכן, לשנות, להשהות או להפסיק את האפליקציה בכל עת.
+
+9. הגבלת אחריות
+השימוש באפליקציה הוא באחריות המשתמש בלבד.
+המפעיל לא יישא באחריות לנזקים שייגרמו עקב השימוש באפליקציה, הסתמכות על תוכנה, או חוסר יכולת להשתמש בה, והכול בכפוף לדין החל.
+
+10. דין וסמכות שיפוט
+על תקנון זה יחולו דיני מדינת ישראל בלבד.
+סמכות השיפוט הבלעדית תהיה לבתי המשפט המוסמכים במחוז חיפה, ישראל.
+
+11. הצהרת Apple
+האפליקציה אינה ממומנת, נתמכת, מנוהלת או קשורה ל-Apple Inc.
+Apple אינה אחראית לאפליקציה או לתכניה.
+`,
+    privacy: `
+Bluffy – מדיניות פרטיות
+
+עודכן לאחרונה: [להוסיף תאריך]
+
+1. כללי
+הפרטיות שלכם חשובה לנו. מדיניות זו מסבירה בצורה פשוטה איזה מידע עשוי או לא עשוי להיאסף בעת השימוש ב-Bluffy.
+
+2. ללא חשבון / ללא הרשמה
+Bluffy אינה דורשת יצירת חשבון או הרשמה לצורך משחק.
+
+3. מידע אישי
+Bluffy אינה מבקשת במכוון מידע אישי מהמשתמשים לצורך משחק רגיל.
+
+4. היסטוריית משחק
+Bluffy אינה מיועדת לשמור היסטוריית משחק אישית המקושרת לזהות המשתמש.
+
+5. אנליטיקה
+נכון לעכשיו, Bluffy אינה משתמשת בכלי אנליטיקה.
+אם יתווספו בעתיד כלי אנליטיקה, מדיניות זו תעודכן בהתאם.
+
+6. פרסומות
+נכון לעכשיו, Bluffy אינה מציגה פרסומות.
+אם יתווספו בעתיד פרסומות, ספקי פרסום של צדדים שלישיים עשויים לאסוף מידע טכני בהתאם למדיניות שלהם.
+
+7. מידע טכני
+חנויות אפליקציות, מערכות הפעלה, שירותי אחסון או ספקים טכנולוגיים עשויים לעבד באופן אוטומטי מידע טכני מוגבל הנדרש לצורך תפעול, אבטחה או אספקת השירות.
+
+8. ילדים
+מאחר שהאפליקציה עשויה להיות בשימוש ילדים, אנו שואפים לצמצם ככל האפשר איסוף מידע.
+
+9. שינויים
+אנו רשאים לעדכן מדיניות זו מעת לעת. הגרסה המעודכנת ביותר תופיע באפליקציה.
+
+10. יצירת קשר
+לשאלות בנושא פרטיות:
+[להוסיף כתובת מייל או דרך יצירת קשר]
+`
+  }
+};
 export default function Bluffy(){
   const[uid]=useState(()=>genUid());
   const[lang,setLang]=useState("en");
@@ -306,6 +483,8 @@ export default function Bluffy(){
   const[err,setErr]=useState("");
   const[copied,setCopied]=useState(false);
   const[showHelp,setShowHelp]=useState(false);
+  const[showLegal,setShowLegal]=useState(false);
+  const[legalTab,setLegalTab]=useState("terms");
   const[timer,setTimer]=useState(0);
   const[revealTimer,setRevealTimer]=useState(0);
   const[catTimer,setCatTimer]=useState(0);
@@ -690,9 +869,322 @@ update(ref(db,`rooms/${room}`),{
   </div>;
 
   const bg="linear-gradient(180deg,#0f0c29,#1a1a3e)";
+  const FloatingLegalButton = () => (
+  <button
+    onClick={() => {
+      setLegalTab("terms");
+      setShowLegal(true);
+    }}
+    style={{
+      position: "fixed",
+      top: 14,
+      [he ? "left" : "right"]: 14,
+      zIndex: 1000,
+      background: "rgba(15,12,41,.88)",
+      color: "#FFD700",
+      border: "1px solid rgba(255,215,0,.25)",
+      borderRadius: 999,
+      padding: "10px 14px",
+      fontSize: 12,
+      fontWeight: 800,
+      boxShadow: "0 8px 24px rgba(0,0,0,.35)",
+      backdropFilter: "blur(8px)",
+      WebkitBackdropFilter: "blur(8px)",
+      cursor: "pointer"
+    }}
+  >
+    📄 {t.legal}
+  </button>
+);
+  const LegalModal = () =>
+  showLegal ? (
+    <div
+      onClick={() => setShowLegal(false)}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,.82)",
+        zIndex: 2000,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 16
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: 760,
+          maxHeight: "86vh",
+          overflow: "hidden",
+          background: "linear-gradient(180deg,#16132f,#1a1a3e)",
+          border: "1px solid rgba(255,255,255,.1)",
+          borderRadius: 20,
+          boxShadow: "0 20px 60px rgba(0,0,0,.5)",
+          display: "flex",
+          flexDirection: "column",
+          direction: he ? "rtl" : "ltr"
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            padding: "16px 16px 12px",
+            borderBottom: "1px solid rgba(255,255,255,.08)"
+          }}
+        >
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => setLegalTab("terms")}
+              style={{
+                ...B,
+                padding: "10px 14px",
+                borderRadius: 10,
+                background:
+                  legalTab === "terms"
+                    ? "rgba(255,215,0,.18)"
+                    : "rgba(255,255,255,.06)",
+                color: legalTab === "terms" ? "#FFD700" : "#fff",
+                fontSize: 13,
+                fontWeight: 700,
+                border:
+                  legalTab === "terms"
+                    ? "1px solid rgba(255,215,0,.25)"
+                    : "1px solid rgba(255,255,255,.08)"
+              }}
+            >
+              {t.terms}
+            </button>
+
+            <button
+              onClick={() => setLegalTab("privacy")}
+              style={{
+                ...B,
+                padding: "10px 14px",
+                borderRadius: 10,
+                background:
+                  legalTab === "privacy"
+                    ? "rgba(192,132,252,.18)"
+                    : "rgba(255,255,255,.06)",
+                color: legalTab === "privacy" ? "#C084FC" : "#fff",
+                fontSize: 13,
+                fontWeight: 700,
+                border:
+                  legalTab === "privacy"
+                    ? "1px solid rgba(192,132,252,.25)"
+                    : "1px solid rgba(255,255,255,.08)"
+              }}
+            >
+              {t.privacy}
+            </button>
+          </div>
+
+          <button
+            onClick={() => setShowLegal(false)}
+            style={{
+              ...B,
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              background: "rgba(255,255,255,.06)",
+              color: "rgba(255,255,255,.75)",
+              fontSize: 18,
+              fontWeight: 800,
+              border: "1px solid rgba(255,255,255,.08)"
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        <div
+          style={{
+            padding: 18,
+            overflowY: "auto",
+            whiteSpace: "pre-wrap",
+            color: "rgba(255,255,255,.86)",
+            lineHeight: 1.8,
+            fontSize: 14
+          }}
+        >
+          <h2
+            style={{
+              margin: "0 0 14px",
+              color: legalTab === "terms" ? "#FFD700" : "#C084FC",
+              fontSize: 22,
+              fontWeight: 900
+            }}
+          >
+            {legalTab === "terms" ? t.termsTitle : t.privacyTitle}
+          </h2>
+
+          {LEGAL[lang][legalTab]}
+        </div>
+      </div>
+    </div>
+  ) : null;
 
   // ════════ HOME ════════
   if(!room&&page==="home")return(<div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"linear-gradient(135deg,#0f0c29,#302b63,#24243e)",padding:20}}>
+    <button
+  onClick={() => {
+    setLegalTab("terms");
+    setShowLegal(true);
+  }}
+  style={{
+    position: "fixed",
+    top: 14,
+    right: lang === "he" ? "auto" : 14,
+    left: lang === "he" ? 14 : "auto",
+    zIndex: 1000,
+    background: "rgba(15,12,41,.88)",
+    color: "#FFD700",
+    border: "1px solid rgba(255,215,0,.25)",
+    borderRadius: 999,
+    padding: "10px 14px",
+    fontSize: 12,
+    fontWeight: 800,
+    boxShadow: "0 8px 24px rgba(0,0,0,.35)",
+    cursor: "pointer"
+  }}
+>
+  📄 {t.legal}
+</button>
+
+{showLegal && (
+  <div
+    onClick={() => setShowLegal(false)}
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,.82)",
+      zIndex: 2000,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 16
+    }}
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      style={{
+        width: "100%",
+        maxWidth: 760,
+        maxHeight: "86vh",
+        overflow: "hidden",
+        background: "linear-gradient(180deg,#16132f,#1a1a3e)",
+        border: "1px solid rgba(255,255,255,.1)",
+        borderRadius: 20,
+        boxShadow: "0 20px 60px rgba(0,0,0,.5)",
+        display: "flex",
+        flexDirection: "column",
+        direction: lang === "he" ? "rtl" : "ltr"
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+          padding: "16px 16px 12px",
+          borderBottom: "1px solid rgba(255,255,255,.08)"
+        }}
+      >
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            onClick={() => setLegalTab("terms")}
+            style={{
+              ...B,
+              padding: "10px 14px",
+              borderRadius: 10,
+              background:
+                legalTab === "terms"
+                  ? "rgba(255,215,0,.18)"
+                  : "rgba(255,255,255,.06)",
+              color: legalTab === "terms" ? "#FFD700" : "#fff",
+              fontSize: 13,
+              fontWeight: 700,
+              border:
+                legalTab === "terms"
+                  ? "1px solid rgba(255,215,0,.25)"
+                  : "1px solid rgba(255,255,255,.08)"
+            }}
+          >
+            {t.terms}
+          </button>
+
+          <button
+            onClick={() => setLegalTab("privacy")}
+            style={{
+              ...B,
+              padding: "10px 14px",
+              borderRadius: 10,
+              background:
+                legalTab === "privacy"
+                  ? "rgba(192,132,252,.18)"
+                  : "rgba(255,255,255,.06)",
+              color: legalTab === "privacy" ? "#C084FC" : "#fff",
+              fontSize: 13,
+              fontWeight: 700,
+              border:
+                legalTab === "privacy"
+                  ? "1px solid rgba(192,132,252,.25)"
+                  : "1px solid rgba(255,255,255,.08)"
+            }}
+          >
+            {t.privacy}
+          </button>
+        </div>
+
+        <button
+          onClick={() => setShowLegal(false)}
+          style={{
+            ...B,
+            width: 36,
+            height: 36,
+            borderRadius: 10,
+            background: "rgba(255,255,255,.06)",
+            color: "rgba(255,255,255,.75)",
+            fontSize: 18,
+            fontWeight: 800,
+            border: "1px solid rgba(255,255,255,.08)"
+          }}
+        >
+          ×
+        </button>
+      </div>
+
+      <div
+        style={{
+          padding: 18,
+          overflowY: "auto",
+          whiteSpace: "pre-wrap",
+          color: "rgba(255,255,255,.86)",
+          lineHeight: 1.8,
+          fontSize: 14
+        }}
+      >
+        <h2
+          style={{
+            margin: "0 0 14px",
+            color: legalTab === "terms" ? "#FFD700" : "#C084FC",
+            fontSize: 22,
+            fontWeight: 900
+          }}
+        >
+          {legalTab === "terms" ? t.termsTitle : t.privacyTitle}
+        </h2>
+
+        {LEGAL[lang][legalTab]}
+      </div>
+    </div>
+  </div>
+)}
     <style>{`@keyframes f{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}button{font-family:inherit;border:none;cursor:pointer;transition:all .2s}button:hover{filter:brightness(1.1)}input{font-family:inherit}input:focus{outline:none;border-color:rgba(192,132,252,.5)!important}`}</style>
     <div style={{fontSize:100,marginBottom:8,filter:"drop-shadow(0 0 30px rgba(255,215,0,.3))",animation:"f 3s ease-in-out infinite"}}>🃏</div>
     <h1 style={{fontSize:56,fontWeight:900,margin:0,background:"linear-gradient(135deg,#FFD700,#FF6B6B,#C084FC)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>{t.appName}</h1>
