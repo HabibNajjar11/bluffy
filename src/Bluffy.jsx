@@ -337,9 +337,10 @@ The operator will not be liable for damages resulting from use of the app, relia
 These terms are governed by the laws of the State of Israel.
 Exclusive jurisdiction: competent courts in Haifa District, Israel.
 
-11. Apple Disclaimer
-This app is not sponsored, endorsed, administered by, or associated with Apple Inc.
-Apple is not responsible for the app or its content.
+11. App Store / Platform Disclaimer
+This app may be distributed through third-party platforms, including the Apple App Store and Google Play.
+Such platforms are not responsible for the app, its content, maintenance, support, or claims related to it.
+The app is not sponsored, endorsed, or administered by such platforms, except as required for distribution.
 `,
     privacy: `
 Bluffy – Privacy Policy
@@ -425,9 +426,10 @@ Bluffy היא אפליקציית טריוויה המיועדת למטרות בי
 על תקנון זה יחולו דיני מדינת ישראל בלבד.
 סמכות השיפוט הבלעדית תהיה לבתי המשפט המוסמכים במחוז חיפה, ישראל.
 
-11. הצהרת Apple
-האפליקציה אינה ממומנת, נתמכת, מנוהלת או קשורה ל-Apple Inc.
-Apple אינה אחראית לאפליקציה או לתכניה.
+11. הצהרת חנויות אפליקציה / פלטפורמות
+האפליקציה עשויה להיות מופצת באמצעות פלטפורמות צד שלישי, לרבות Apple App Store ו-Google Play.
+פלטפורמות אלה אינן אחראיות לאפליקציה, לתכניה, לתחזוקה שלה, לתמיכה בה או לכל טענה הקשורה אליה.
+האפליקציה אינה ממומנת, נתמכת או מנוהלת על ידי פלטפורמות אלה, למעט כנדרש לצורך הפצה.
 `,
     privacy: `
 Bluffy – מדיניות פרטיות
