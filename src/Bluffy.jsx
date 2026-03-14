@@ -161,127 +161,127 @@ function strictMatch(i,c){return deepNorm(i)===deepNorm(c);}
 // ═══════════════════════════════════════════════════════════
 
 function detectAnswerType(q){
-  const a=q.answer_en||"";
+  const a=(q.answer_en||"").trim();
   if(q.flag_country||q.flag_code||q.category==="flags")return"country";
   if(/^\d{3,4}$/.test(a))return"year";
   if(/^\d+\.?\d*$/.test(a))return"number";
+  const colors=["red","blue","green","yellow","orange","purple","pink","black","white","brown","gray","grey","gold","silver","teal","cyan","magenta","violet","indigo","scarlet","crimson","maroon","navy","turquoise","beige","ivory","coral","lime"];
+  if(colors.includes(a.toLowerCase()))return"color";
+  const animals=["dog","cat","elephant","whale","lion","tiger","bear","shark","eagle","snake","wolf","dolphin","horse","monkey","penguin","rabbit","fox","deer","cow","pig","chicken","duck","goat","sheep","frog","snail","octopus","bat","owl","parrot","camel","giraffe","zebra","hippo","rhino","crocodile","turtle","slug","ant","bee","butterfly","spider","mouse","rat","hamster","koala","panda","kangaroo","cheetah","leopard","jaguar","gorilla","chimpanzee"];
+  if(animals.includes(a.toLowerCase())||animals.some(an=>a.toLowerCase().includes(an)))return"animal";
   if(q.category==="famous")return"person";
-  // Multi-word starting with uppercase → likely person
   const words=a.split(" ");
   if(words.length>=2&&/^[A-Z]/.test(a)){
-    const nonPlace=!["Ocean","Sea","Empire","City","America","Zealand","Trafford","Madrid","whale","dioxide","Republic"].some(w=>a.includes(w));
+    const nonPlace=!["Ocean","Sea","Empire","City","America","Zealand","Trafford","Madrid","whale","dioxide","Republic","Kingdom"].some(w=>a.includes(w));
     if(nonPlace)return"person";
   }
-  if(["geography"].includes(q.category)&&!/^\d/.test(a))return"country";
+  if(q.category==="geography"&&!/^\d/.test(a))return"country";
   if(q.category==="football")return"football";
   if(q.category==="movies"||q.category==="cartoons")return"entertainment";
   if(q.category==="fashion")return"fashion";
+  if(q.category==="sport")return"sport_term";
   if(q.category==="science")return"science_term";
+  if(q.category==="strange_questions")return"strange";
   return"general";
 }
 
-// Near-miss generators by type
+// ═══════════════════════════════════════════════════════════
+// SMART DISTRACTOR ENGINE (5 strategies)
+// ═══════════════════════════════════════════════════════════
 function genSmartDistractors(q,existingTexts,ln,count){
   const results=[];
   const used=new Set(existingTexts.map(deepNorm));
   const aType=detectAnswerType(q);
   const aEn=q.answer_en||"";
   const aHe=q.answer_he||"";
-  const ca=ln==="he"?aHe:aEn;
 
   function addIfNew(text){
-    const t=titleCase(text,ln);
+    if(!text)return false;
+    const t=titleCase(String(text),ln);
     const n=deepNorm(t);
-    if(n&&!used.has(n)&&!isCorrect(t,aEn)&&!isCorrect(t,aHe)){
+    if(n&&n.length>0&&!used.has(n)&&!isCorrect(t,aEn)&&!isCorrect(t,aHe)){
       used.add(n);results.push(t);return true;
     }
     return false;
   }
 
-  // Strategy 1: Near-miss based on type
-  if(aType==="year"){
-    const yr=parseInt(aEn);
+  // ─── S1: Mine QS for same-type answers in same category ───
+  try{
+    const sameCat=QS.filter(function(o){return o.id!==q.id&&o.category===q.category&&detectAnswerType(o)===aType;});
+    const sh=[...sameCat].sort(function(){return Math.random()-0.5;});
+    for(var si=0;si<sh.length&&results.length<count;si++){
+      var ans=ln==="he"?(sh[si].answer_he||sh[si].answer_en):sh[si].answer_en;
+      addIfNew(ans);
+    }
+  }catch(e){}
+
+  // ─── S2: Near-miss for years and numbers ───
+  if(aType==="year"&&results.length<count){
+    var yr=parseInt(aEn);
     if(!isNaN(yr)){
-      // Off-by-1, off-by-2, common confusions
-      const offsets=[-3,-2,-1,1,2,3,-5,5,-10,10,-20,20];
-      const shuffled=offsets.sort(()=>Math.random()-0.5);
-      for(const off of shuffled){
-        if(results.length>=count)break;
-        const candidate=String(yr+off);
-        addIfNew(candidate);
-      }
+      var offsets=[-1,1,-2,2,-3,3,-5,5,-10,10].sort(function(){return Math.random()-0.5;});
+      for(var oi=0;oi<offsets.length&&results.length<count;oi++) addIfNew(String(yr+offsets[oi]));
     }
   }
-
-  if(aType==="number"){
-    const num=parseFloat(aEn);
+  if(aType==="number"&&results.length<count){
+    var num=parseFloat(aEn);
     if(!isNaN(num)){
-      const nearby=[num-1,num+1,num-2,num+2,num*2,Math.round(num/2),num+10,num-10,num+5,num-5].filter(n=>n>0);
-      for(const n of nearby.sort(()=>Math.random()-0.5)){
-        if(results.length>=count)break;
-        addIfNew(String(n%1===0?n:n.toFixed(1)));
+      var near=num<=20?[num-1,num+1,num-2,num+2,num+3,num-3,num*2,num*3]:[num-1,num+1,num-2,num+2,num-5,num+5,num-10,num+10,Math.round(num*1.1),Math.round(num*0.9),num*2,Math.round(num/2)];
+      near=near.filter(function(n){return n>0;}).sort(function(){return Math.random()-0.5;});
+      for(var ni=0;ni<near.length&&results.length<count;ni++){
+        var v=near[ni];
+        addIfNew(String(v%1===0?v:v.toFixed(1)));
       }
     }
   }
 
-  // Strategy 2: Category-specific banks
-  const BANKS={
-    person:{
-      en:["Alexander Hamilton","Marco Polo","Nikola Tesla","Thomas Edison","Charles Darwin","Galileo Galilei","Wolfgang Mozart","Pablo Picasso","Vincent Van Gogh","Isaac Newton","Benjamin Franklin","Napoleon Bonaparte","Aristotle","Plato","Sigmund Freud","Henry Ford","James Watt","Louis Pasteur","Copernicus","Archimedes","Jules Verne","Mark Twain","Oscar Wilde","Frida Kahlo","Leonardo DiCaprio","Albert Schweitzer","Marie Antoinette","Cleopatra","Alexander The Great","Genghis Khan","Socrates","Confucius","Sun Tzu","Machiavelli","Che Guevara"],
-      he:["אלכסנדר המילטון","מרקו פולו","ניקולה טסלה","תומאס אדיסון","צ'רלס דרווין","גלילאו גלילאי","וולפגנג מוצרט","פבלו פיקאסו","וינסנט ואן גוך","אייזק ניוטון","בנג'מין פרנקלין","נפוליאון בונפרטה","אריסטו","אפלטון","זיגמונד פרויד","הנרי פורד","לואי פסטר","קופרניקוס","ארכימדס","ז'ול ורן","מארק טוויין","פרידה קאלו","לאונרדו דיקפריו","מארי אנטואנט","קלאופטרה","אלכסנדר הגדול","ג'ינגיס חאן","סוקרטס","קונפוציוס","סון צו","מקיאוולי","צ'ה גוורה"]
-    },
-    country:{
-      en:["Sweden","Norway","Denmark","Poland","Hungary","Austria","Belgium","Netherlands","Portugal","Ireland","Iceland","Greece","Switzerland","Finland","Estonia","Latvia","Lithuania","Croatia","Serbia","Bulgaria","Morocco","Algeria","Tunisia","Chile","Peru","Bolivia","Ecuador","Venezuela","Cuba","Panama","Philippines","Vietnam","Malaysia","Thailand","Cambodia","Sri Lanka","Nepal","Bangladesh","Pakistan","Kazakhstan","Qatar","Kuwait","Oman","Jordan","Lebanon","Georgia","Armenia","Azerbaijan","Mongolia","Paraguay","Uruguay"],
-      he:["שוודיה","נורבגיה","דנמרק","פולין","הונגריה","אוסטריה","בלגיה","הולנד","פורטוגל","אירלנד","איסלנד","יוון","שוויץ","פינלנד","אסטוניה","לטביה","ליטא","קרואטיה","סרביה","בולגריה","מרוקו","אלג'יריה","תוניסיה","צ'ילה","פרו","בוליביה","אקוודור","ונצואלה","קובה","פנמה","הפיליפינים","וייטנאם","מלזיה","תאילנד","קמבודיה","סרי לנקה","נפאל","בנגלדש","פקיסטן","קזחסטן","קטאר","כווית","עומאן","ירדן","לבנון","גאורגיה","ארמניה","אזרבייג'ן","מונגוליה","פרגוואי","אורוגוואי"]
-    },
-    football:{
-      en:["Barcelona","Liverpool","Bayern Munich","Juventus","AC Milan","Ajax","Porto","Benfica","Chelsea","Arsenal","PSG","Borussia Dortmund","Inter Milan","Atletico Madrid","Manchester City","Tottenham","Napoli","Roma","Lazio","Sevilla","Valencia","Lyon","Marseille","Celtic","Rangers"],
-      he:["ברצלונה","ליברפול","באיירן מינכן","יובנטוס","מילאן","אייאקס","פורטו","בנפיקה","צ'לסי","ארסנל","פ.ס.ז'","דורטמונד","אינטר מילאן","אטלטיקו מדריד","מנצ'סטר סיטי","טוטנהאם","נאפולי","רומא","לאציו","סביליה","ולנסיה","ליון","מרסיי","סלטיק"]
-    },
-    entertainment:{
-      en:["Tom Hanks","Brad Pitt","Meryl Streep","Leonardo DiCaprio","Scarlett Johansson","Morgan Freeman","Robert De Niro","Al Pacino","Johnny Depp","Denzel Washington","Hogwarts","Gotham","Metropolis","Wakanda","Narnia","Mordor","Pandora","Neverland","Asgard"],
-      he:["טום הנקס","בראד פיט","מריל סטריפ","לאונרדו דיקפריו","סקרלט ג'והנסון","מורגן פרימן","רוברט דה נירו","אל פצ'ינו","ג'וני דפ","דנזל וושינגטון","הוגוורטס","גותהם","מטרופוליס","וואקנדה","נרניה","מורדור","פנדורה","אסגארד"]
-    },
-    fashion:{
-      en:["Gucci","Prada","Versace","Armani","Dior","Louis Vuitton","Burberry","Balenciaga","Hermes","Fendi","Valentino","Givenchy","YSL","Zara","Dolce & Gabbana","Calvin Klein","Ralph Lauren","Tommy Hilfiger","Hugo Boss","Lacoste"],
-      he:["גוצ'י","פראדה","ורסאצ'ה","ארמני","דיור","לואי ויטון","ברברי","בלנסיאגה","הרמס","פנדי","ולנטינו","ז'יבנשי","זארה","דולצ'ה וגבאנה","קלווין קליין","ראלף לורן","טומי הילפיגר","הוגו בוס","לקוסט"]
-    },
-    science_term:{
-      en:["Hydrogen","Helium","Carbon","Iron","Oxygen","Sodium","Calcium","Mercury","Uranium","Lithium","Platinum","Copper","Zinc","Lead","Neon","Argon","Tungsten","Nitrogen","Phosphorus","Sulfur","Chlorine","Potassium","Magnesium","Silicon"],
-      he:["מימן","הליום","פחמן","ברזל","חמצן","נתרן","סידן","כספית","אורניום","ליתיום","פלטינה","נחושת","אבץ","עופרת","ניאון","ארגון","טונגסטן","חנקן","זרחן","גופרית","כלור","אשלגן","מגנזיום","סיליקון"]
-    },
-    general:{
-      en:["Mercury","Venus","Jupiter","Saturn","Mars","Neptune","Uranus","Pluto","Diamond","Gold","Silver","Bronze","Iron","Copper","Cotton","Silk","Wool","Leather","Gravity","Magnetism","Friction","Inertia","Momentum","Velocity"],
-      he:["כוכב חמה","נוגה","צדק","שבתאי","מאדים","נפטון","אורנוס","פלוטו","יהלום","זהב","כסף","ארד","ברזל","נחושת","כותנה","משי","צמר","עור","כוח הכבידה","מגנטיות","חיכוך","אינרציה","מומנטום"]
-    }
+  // ─── S3: Curated confusion banks (bilingual) ───
+  var CB={
+    color:{en:["Red","Blue","Green","Yellow","Orange","Purple","Pink","Black","White","Brown","Gray","Gold","Silver","Teal","Cyan","Magenta","Violet","Indigo","Scarlet","Crimson","Maroon","Navy","Turquoise","Beige","Ivory","Coral","Lime"],he:["אדום","כחול","ירוק","צהוב","כתום","סגול","ורוד","שחור","לבן","חום","אפור","זהב","כסף","טורקיז","ציאן","מגנטה","סגלגל","אינדיגו","ארגמן","בורדו","שנהב","אלמוג"]},
+    animal:{en:["Dog","Cat","Elephant","Lion","Tiger","Bear","Shark","Eagle","Snake","Wolf","Dolphin","Horse","Monkey","Penguin","Rabbit","Fox","Deer","Whale","Octopus","Giraffe","Zebra","Hippopotamus","Rhinoceros","Crocodile","Turtle","Snail","Bat","Owl","Parrot","Camel","Koala","Panda","Kangaroo","Cheetah","Gorilla","Chameleon","Flamingo","Jellyfish","Seahorse"],he:["כלב","חתול","פיל","אריה","נמר","דוב","כריש","נשר","נחש","זאב","דולפין","סוס","קוף","פינגווין","ארנב","שועל","אייל","לווייתן","תמנון","ג'ירפה","זברה","היפופוטם","קרנף","תנין","צב","חילזון","עטלף","ינשוף","תוכי","גמל","קואלה","פנדה","קנגורו","ברדלס","גורילה","זיקית","פלמינגו","מדוזה"]},
+    person:{en:["Nikola Tesla","Thomas Edison","Isaac Newton","Charles Darwin","Galileo Galilei","Wolfgang Mozart","Pablo Picasso","Vincent Van Gogh","Benjamin Franklin","Napoleon Bonaparte","Aristotle","Plato","Sigmund Freud","Leonardo DiCaprio","Marie Antoinette","Alexander The Great","Genghis Khan","Socrates","Martin Luther King","Abraham Lincoln","Winston Churchill","Mahatma Gandhi","Nelson Mandela","Albert Einstein","Stephen Hawking","Marie Curie","Marco Polo","Christopher Columbus","Beethoven","Bach","Shakespeare","Michelangelo","Rembrandt","Frida Kahlo","Salvador Dali","Alfred Nobel","Alexander Fleming","Tim Berners-Lee","Alan Turing"],he:["ניקולה טסלה","תומאס אדיסון","אייזק ניוטון","צ'רלס דרווין","גלילאו גלילאי","וולפגנג מוצרט","פבלו פיקאסו","וינסנט ואן גוך","בנג'מין פרנקלין","נפוליאון בונפרטה","אריסטו","אפלטון","זיגמונד פרויד","לאונרדו דיקפריו","מארי אנטואנט","אלכסנדר הגדול","ג'ינגיס חאן","סוקרטס","מרטין לותר קינג","אברהם לינקולן","וינסטון צ'רצ'יל","מהטמה גנדי","נלסון מנדלה","אלברט איינשטיין","סטיבן הוקינג","מארי קירי","מרקו פולו","כריסטופר קולומבוס","בטהובן","באך","שייקספיר","מיכלאנג'לו","רמברנדט","פרידה קאלו","אלפרד נובל","אלכסנדר פלמינג","טים ברנרס לי","אלן טיורינג"]},
+    country:{en:["Sweden","Norway","Denmark","Poland","Hungary","Austria","Belgium","Netherlands","Portugal","Ireland","Iceland","Greece","Switzerland","Finland","Estonia","Latvia","Lithuania","Croatia","Serbia","Bulgaria","Morocco","Algeria","Tunisia","Chile","Peru","Bolivia","Ecuador","Venezuela","Cuba","Panama","Philippines","Vietnam","Malaysia","Thailand","Cambodia","Sri Lanka","Nepal","Bangladesh","Pakistan","Kazakhstan","Qatar","Kuwait","Oman","Jordan","Lebanon","Georgia","Armenia","Azerbaijan","Mongolia","Paraguay","Uruguay","New Zealand","South Africa","Kenya","Tanzania","Ethiopia","Ghana","Senegal","Madagascar"],he:["שוודיה","נורבגיה","דנמרק","פולין","הונגריה","אוסטריה","בלגיה","הולנד","פורטוגל","אירלנד","איסלנד","יוון","שוויץ","פינלנד","אסטוניה","לטביה","ליטא","קרואטיה","סרביה","בולגריה","מרוקו","אלג'יריה","תוניסיה","צ'ילה","פרו","בוליביה","אקוודור","ונצואלה","קובה","פנמה","הפיליפינים","וייטנאם","מלזיה","תאילנד","קמבודיה","סרי לנקה","נפאל","בנגלדש","פקיסטן","קזחסטן","קטאר","כווית","עומאן","ירדן","לבנון","גאורגיה","ארמניה","אזרבייג'ן","מונגוליה","פרגוואי","אורוגוואי","ניו זילנד","דרום אפריקה","קניה","טנזניה","אתיופיה","גאנה","סנגל","מדגסקר"]},
+    football:{en:["Barcelona","Liverpool","Bayern Munich","Juventus","AC Milan","Ajax","Porto","Benfica","Chelsea","Arsenal","PSG","Borussia Dortmund","Inter Milan","Atletico Madrid","Manchester City","Manchester United","Tottenham","Napoli","Roma","Lazio","Sevilla","Valencia","Lyon","Marseille","Celtic","Galatasaray","Fenerbahce","Villarreal","Newcastle","Bayer Leverkusen"],he:["ברצלונה","ליברפול","באיירן מינכן","יובנטוס","מילאן","אייאקס","פורטו","בנפיקה","צ'לסי","ארסנל","פ.ס.ז'","דורטמונד","אינטר מילאן","אטלטיקו מדריד","מנצ'סטר סיטי","מנצ'סטר יונייטד","טוטנהאם","נאפולי","רומא","לאציו","סביליה","ולנסיה","ליון","מרסיי","סלטיק","גלטסראי","ויאריאל","ניוקאסל","באייר לברקוזן"]},
+    entertainment:{en:["Tom Hanks","Brad Pitt","Meryl Streep","Leonardo DiCaprio","Scarlett Johansson","Morgan Freeman","Robert De Niro","Al Pacino","Johnny Depp","Denzel Washington","Harrison Ford","Tom Cruise","Will Smith","Matt Damon","George Clooney","Julia Roberts","Angelina Jolie","Nicole Kidman","Robin Williams","Jack Nicholson","Christian Bale","Keanu Reeves","Ryan Gosling","Emma Stone","Natalie Portman","Hogwarts","Gotham","Wakanda","Narnia","Mordor","Pandora","Asgard"],he:["טום הנקס","בראד פיט","מריל סטריפ","לאונרדו דיקפריו","סקרלט ג'והנסון","מורגן פרימן","רוברט דה נירו","אל פצ'ינו","ג'וני דפ","דנזל וושינגטון","האריסון פורד","טום קרוז","וויל סמית","מט דיימון","ג'ורג' קלוני","ג'וליה רוברטס","אנג'לינה ג'ולי","ניקול קידמן","רובין וויליאמס","כריסטיאן בייל","קיאנו ריבס","ריאן גוסלינג","אמה סטון","נטלי פורטמן","הוגוורטס","גותהם","וואקנדה","נרניה","מורדור","פנדורה","אסגארד"]},
+    fashion:{en:["Gucci","Prada","Versace","Armani","Dior","Louis Vuitton","Burberry","Balenciaga","Hermes","Fendi","Valentino","Givenchy","YSL","Zara","Dolce & Gabbana","Calvin Klein","Ralph Lauren","Tommy Hilfiger","Hugo Boss","Lacoste","Chanel","Nike","Adidas","Puma","Reebok","Converse","Rolex","Cartier"],he:["גוצ'י","פראדה","ורסאצ'ה","ארמני","דיור","לואי ויטון","ברברי","בלנסיאגה","הרמס","פנדי","ולנטינו","ז'יבנשי","זארה","דולצ'ה וגבאנה","קלווין קליין","ראלף לורן","טומי הילפיגר","הוגו בוס","לקוסט","שאנל","נייקי","אדידס","פומה","ריבוק","קונברס","רולקס","קרטייה"]},
+    sport_term:{en:["Tennis","Basketball","Baseball","Hockey","Swimming","Boxing","Cycling","Wrestling","Fencing","Rowing","Rugby","Golf","Volleyball","Badminton","Table Tennis","Archery","Judo","Karate","Taekwondo","Surfing","Skiing","Skating","Climbing","Gymnastics","Diving","Cricket","Handball"],he:["טניס","כדורסל","בייסבול","הוקי","שחייה","אגרוף","רכיבה","היאבקות","סיוף","חתירה","רוגבי","גולף","כדורעף","בדמינטון","טניס שולחן","קשתות","ג'ודו","קראטה","טאקוונדו","גלישה","סקי","החלקה","טיפוס","התעמלות","צלילה","קריקט","כדוריד"]},
+    science_term:{en:["Hydrogen","Helium","Carbon","Iron","Oxygen","Sodium","Calcium","Mercury","Uranium","Lithium","Platinum","Copper","Zinc","Lead","Neon","Argon","Tungsten","Nitrogen","Phosphorus","Sulfur","Chlorine","Potassium","Magnesium","Silicon","Titanium","Cobalt","Nickel","Aluminum","Mitochondria","Nucleus","Gravity","Friction","Velocity","Momentum"],he:["מימן","הליום","פחמן","ברזל","חמצן","נתרן","סידן","כספית","אורניום","ליתיום","פלטינה","נחושת","אבץ","עופרת","ניאון","ארגון","טונגסטן","חנקן","זרחן","גופרית","כלור","אשלגן","מגנזיום","סיליקון","טיטניום","מיטוכונדריה","גרעין","כוח הכבידה","חיכוך"]},
+    strange:{en:["2","3","4","5","6","7","8","9","10","12","15","20","24","50","100","Red","Blue","Green","Yellow","Purple","Orange","Pink","Black","White","Dog","Cat","Elephant","Snail","Octopus","Whale","Dolphin","Butterfly","Spider","Bat","Penguin","Flamingo"],he:["2","3","4","5","6","7","8","9","10","12","15","20","24","50","100","אדום","כחול","ירוק","צהוב","סגול","כתום","ורוד","שחור","לבן","כלב","חתול","פיל","חילזון","תמנון","לווייתן","דולפין","פרפר","עכביש","עטלף","פינגווין","פלמינגו"]},
+    general:{en:["Mercury","Venus","Jupiter","Saturn","Mars","Neptune","Uranus","Pluto","Diamond","Gold","Silver","Bronze","Iron","Copper","Cotton","Silk","Wool","Leather","Gravity","Magnetism","Friction","Inertia","North","South","East","West","Spring","Summer","Autumn","Winter"],he:["כוכב חמה","נוגה","צדק","שבתאי","מאדים","נפטון","אורנוס","פלוטו","יהלום","זהב","כסף","ארד","ברזל","נחושת","כותנה","משי","צמר","עור","כוח הכבידה","מגנטיות","חיכוך","אינרציה","צפון","דרום","מזרח","מערב","אביב","קיץ","סתיו","חורף"]}
   };
 
-  // Pick from appropriate bank, shuffled
-  const bankKey=BANKS[aType]?aType:"general";
-  const pool=ln==="he"?BANKS[bankKey].he:BANKS[bankKey].en;
-  const shuffled=[...pool].sort(()=>Math.random()-0.5);
-
-  for(const candidate of shuffled){
-    if(results.length>=count)break;
-    addIfNew(candidate);
+  if(results.length<count){
+    var bk=CB[aType]?aType:"general";
+    var pool=ln==="he"?CB[bk].he:CB[bk].en;
+    var shp=[...pool].sort(function(){return Math.random()-0.5;});
+    for(var pi=0;pi<shp.length&&results.length<count;pi++) addIfNew(shp[pi]);
   }
 
-  // Fallback: try general bank if still short
-  if(results.length<count&&bankKey!=="general"){
-    const fallback=ln==="he"?BANKS.general.he:BANKS.general.en;
-    for(const candidate of fallback.sort(()=>Math.random()-0.5)){
-      if(results.length>=count)break;
-      addIfNew(candidate);
-    }
+  // ─── S4: Cross-category from QS ───
+  if(results.length<count){
+    try{
+      var cross=QS.filter(function(o){return o.id!==q.id&&o.category!==q.category&&detectAnswerType(o)===aType;});
+      var shc=[...cross].sort(function(){return Math.random()-0.5;});
+      for(var ci=0;ci<shc.length&&results.length<count;ci++){
+        var ca2=ln==="he"?(shc[ci].answer_he||shc[ci].answer_en):shc[ci].answer_en;
+        addIfNew(ca2);
+      }
+    }catch(e){}
+  }
+
+  // ─── S5: General fallback ───
+  if(results.length<count){
+    var fb=ln==="he"?CB.general.he:CB.general.en;
+    var shf=[...fb].sort(function(){return Math.random()-0.5;});
+    for(var fi=0;fi<shf.length&&results.length<count;fi++) addIfNew(shf[fi]);
   }
 
   return results;
 }
 
-// Main entry: generate N distractors
 function genDecoy(q,existingTexts,ln){
-  const results=genSmartDistractors(q,existingTexts,ln,1);
-  return results.length>0?results[0]:(ln==="he"?"לא יודע":"Unknown");
+  var r=genSmartDistractors(q,existingTexts,ln,1);
+  return r.length>0?r[0]:(ln==="he"?"לא יודע":"Unknown");
 }
 
 function genMultipleDecoys(q,existingTexts,ln,count){
