@@ -296,7 +296,7 @@ const LEGAL = {
     terms: `
 Bluffy – Terms of Use
 
-Last updated: [ADD DATE]
+Last updated: March 2026
 
 1. General
 Bluffy is a trivia game intended for entertainment purposes only.
@@ -304,7 +304,7 @@ By using the app, you agree to these Terms of Use.
 
 2. Operator
 Bluffy is operated by a private operator based in Israel.
-Contact: [ADD CONTACT EMAIL OR CONTACT METHOD]
+Contact: najjarhabib95@gmail.com
 
 3. Use of the App
 The app does not require registration or account creation.
@@ -344,7 +344,7 @@ Apple is not responsible for the app or its content.
     privacy: `
 Bluffy – Privacy Policy
 
-Last updated: [ADD DATE]
+Last updated: March 2026
 
 1. General
 Your privacy matters to us. This Privacy Policy explains, in a simple way, what information may or may not be collected when you use Bluffy.
@@ -377,14 +377,14 @@ We may update this Privacy Policy from time to time. The most current version wi
 
 10. Contact
 For privacy-related questions:
-[ADD CONTACT EMAIL OR CONTACT METHOD]
+najjarhabib95@gmail.com
 `
   },
   he: {
     terms: `
 Bluffy – תקנון שימוש
 
-עודכן לאחרונה: [להוסיף תאריך]
+עודכן לאחרונה: מרץ 2026
 
 1. כללי
 Bluffy היא אפליקציית טריוויה המיועדת למטרות בידור והנאה בלבד.
@@ -432,7 +432,7 @@ Apple אינה אחראית לאפליקציה או לתכניה.
     privacy: `
 Bluffy – מדיניות פרטיות
 
-עודכן לאחרונה: [להוסיף תאריך]
+עודכן לאחרונה:מרץ 2026
 
 1. כללי
 הפרטיות שלכם חשובה לנו. מדיניות זו מסבירה בצורה פשוטה איזה מידע עשוי או לא עשוי להיאסף בעת השימוש ב-Bluffy.
@@ -465,7 +465,7 @@ Bluffy אינה מיועדת לשמור היסטוריית משחק אישית �
 
 10. יצירת קשר
 לשאלות בנושא פרטיות:
-[להוסיף כתובת מייל או דרך יצירת קשר]
+najjarhabib95@gmail.com
 `
   }
 };
