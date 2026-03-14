@@ -869,9 +869,7 @@ update(ref(db,`rooms/${room}`),{
   </div>;
 
   const bg="linear-gradient(180deg,#0f0c29,#1a1a3e)";
-  const FloatingLegalButton = () => (
-
-);
+  
   const LegalModal = () =>
   showLegal ? (
     <div
@@ -1006,31 +1004,7 @@ update(ref(db,`rooms/${room}`),{
 
   // ════════ HOME ════════
   if(!room&&page==="home")return(<div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"linear-gradient(135deg,#0f0c29,#302b63,#24243e)",padding:20}}>
-    <button
-  onClick={() => {
-    setLegalTab("terms");
-    setShowLegal(true);
-  }}
-  style={{
-    position: "fixed",
-    top: 14,
-    right: lang === "he" ? "auto" : 14,
-    left: lang === "he" ? 14 : "auto",
-    zIndex: 1000,
-    background: "rgba(15,12,41,.88)",
-    color: "#FFD700",
-    border: "1px solid rgba(255,215,0,.25)",
-    borderRadius: 999,
-    padding: "10px 14px",
-    fontSize: 12,
-    fontWeight: 800,
-    boxShadow: "0 8px 24px rgba(0,0,0,.35)",
-    cursor: "pointer"
-  }}
->
-  📄 {t.legal}
-</button>
-
+    
 {showLegal && (
   <div
     onClick={() => setShowLegal(false)}
