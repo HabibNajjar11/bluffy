@@ -608,6 +608,7 @@ export default function Bluffy(){
     const snap=await get(rr);
     if(!snap.exists()){setErr(t.roomNotFound||"Not found");return;}
     const d=snap.val();
+    if(d.state&&d.state!=="lobby"){setErr(he?"המשחק כבר התחיל":"Game already started");return;}
     if(d.players&&Object.keys(d.players).length>=5){setErr(t.roomFull||"Full");return;}
     if(d.players&&Object.values(d.players).some(p=>p.name===myName.trim())){setErr(t.nameTaken||"Name taken");return;}
     await update(ref(db,`rooms/${code}/players/${uid}`),{name:myName.trim(),score:0,order:d.players?Object.keys(d.players).length:0,avatar:myAvatar});
