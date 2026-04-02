@@ -1,18 +1,2 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  background: #0f0c29;
-  overscroll-behavior: none;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-  -webkit-tap-highlight-color: transparent;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-}
-#root {
-  min-height: 100%;
-}
+body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; background: #0f0c29; }
