@@ -835,24 +835,19 @@ update(ref(db,`rooms/${room}`),{
     update(ref(db,`rooms/${room}`),{state:"catSel",round:(rd?.round||1)+1,turnIdx:((rd?.turnIdx||0)+1)%playerCount,question:null,answers:null,publicAnswers:null,selections:null,options:null,results:null,correctAnswer:null,catDeadline:Date.now()+(rd?.settings?.time||30)*1000});
   };
 
-  const playAgain=()=>{
-  if(!room)return;
-  const u={};
-  playerList.forEach(([id])=>{u[`players/${id}/score`]=0;});
-  u.state="lobby";
-  u.round=0;
-  u.turnIdx=0;
-  u.question=null;
-  u.answers=null;
-  u.publicAnswers=null;
-  u.selections=null;
-  u.options=null;
-  u.results=null;
-  u.correctAnswer=null;
-  u.catDeadline=null;
-  u.deadline=null;
-  u.revealDeadline=null;
-  update(ref(db,`rooms/${room}`),u);
+  const playAgain = () => {
+  if (!room) return;
+
+  const currentRoom = room;
+
+  // remove only this player from the room
+  remove(ref(db, `rooms/${currentRoom}/players/${uid}`));
+
+  // reset only this player's local UI
+  setRd(null);
+  setRoom(null);
+  setPage("join");
+  setJoinCode(currentRoom);
 };
 
   // ═══ COMPONENTS ═══
