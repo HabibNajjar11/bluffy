@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { db } from "./firebase";
 import { ref, set, get, onValue, off, update, remove } from "firebase/database";
 import QRCode from "react-qr-code";
@@ -155,6 +155,7 @@ function titleCase(s,ln){
 
 // Exact normalized match (for bluff rejection: don't let them submit the correct answer)
 function strictMatch(i,c){return deepNorm(i)===deepNorm(c);}
+const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 
 // ═══════════════════════════════════════════════════════════
 // SMART DISTRACTOR GENERATION
@@ -510,6 +511,10 @@ export default function Bluffy(){
   const baseUrl=typeof window!=="undefined"?window.location.origin+window.location.pathname:"";
   const joinUrl=room?`${baseUrl}?room=${room}`:"";
   const state=rd?.state||""; // lobby, catSel, answering, reveal, post, over
+  const roundCats = useMemo(() => {
+  const list = (rd?.settings?.cats?.length ? rd.settings.cats : CATS).slice();
+  return shuffle(list).slice(0, Math.min(8, list.length));
+}, [room, rd?.round, rd?.turnIdx, JSON.stringify(rd?.settings?.cats || [])]);
 
   // ═══ FIREBASE LISTENER ═══
   useEffect(()=>{
@@ -830,7 +835,25 @@ update(ref(db,`rooms/${room}`),{
     update(ref(db,`rooms/${room}`),{state:"catSel",round:(rd?.round||1)+1,turnIdx:((rd?.turnIdx||0)+1)%playerCount,question:null,answers:null,publicAnswers:null,selections:null,options:null,results:null,correctAnswer:null,catDeadline:Date.now()+(rd?.settings?.time||30)*1000});
   };
 
-  const playAgain=()=>{if(!isHost)return;const u={};playerList.forEach(([id])=>{u[`players/${id}/score`]=0;});u.state="lobby";u.round=0;update(ref(db,`rooms/${room}`),u);};
+  const playAgain=()=>{
+  if(!room)return;
+  const u={};
+  playerList.forEach(([id])=>{u[`players/${id}/score`]=0;});
+  u.state="lobby";
+  u.round=0;
+  u.turnIdx=0;
+  u.question=null;
+  u.answers=null;
+  u.publicAnswers=null;
+  u.selections=null;
+  u.options=null;
+  u.results=null;
+  u.correctAnswer=null;
+  u.catDeadline=null;
+  u.deadline=null;
+  u.revealDeadline=null;
+  update(ref(db,`rooms/${room}`),u);
+};
 
   // ═══ COMPONENTS ═══
   const FI=({c,code,flag})=>{
@@ -1265,9 +1288,9 @@ update(ref(db,`rooms/${room}`),{
     <div style={{textAlign:"center"}}><span style={{fontSize:40}}>👆</span>
     <p style={{color:"#FFD700",fontSize:20,fontWeight:700,margin:"8px 0"}}>{turnName}{t.turn}</p></div>
     {isMyTurn?<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginTop:16}}>
-      {cats.slice(0,8).map(c=><button key={c} onClick={()=>selectCategory(c)} style={{background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.1)",borderRadius:16,padding:"20px 10px",display:"flex",flexDirection:"column",alignItems:"center",gap:6,...B}}>
-        <span style={{fontSize:32}}>{ICONS[c]}</span><span style={{color:"#fff",fontSize:13,fontWeight:600}}>{t[c]}</span>
-      </button>)}
+    {roundCats.map(c=><button key={c} onClick={()=>selectCategory(c)} style={{background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.1)",borderRadius:16,padding:"20px 10px",display:"flex",flexDirection:"column",alignItems:"center",gap:6,...B}}>
+  <span style={{fontSize:32}}>{ICONS[c]}</span><span style={{color:"#fff",fontSize:13,fontWeight:600}}>{t[c]}</span>
+</button>)}
     </div>:<p style={{color:"rgba(255,255,255,.5)",marginTop:20,textAlign:"center"}}>{t.waiting}</p>}
   </div></div>);}
 
@@ -1456,10 +1479,14 @@ update(ref(db,`rooms/${room}`),{
       </div>
       <span style={{color:"rgba(255,255,255,.7)",fontWeight:800,fontSize:20}}>{p.score||0} {t.pts}</span>
     </div>)}
-    <div style={{display:"flex",gap:12,marginTop:24,justifyContent:"center"}}>
-      {isHost&&<button onClick={playAgain} style={{...B,background:"linear-gradient(135deg,#FFD700,#FFA500)",color:"#1a1a2e",fontSize:16,fontWeight:700,padding:"14px 32px",borderRadius:14}}>{t.again}</button>}
-      <button onClick={leaveRoom} style={{...B,background:"rgba(255,255,255,.1)",color:"rgba(255,255,255,.6)",fontSize:16,padding:"14px 32px",borderRadius:14}}>{t.menu}</button>
-    </div>
+    <div style={{display:"flex",gap:12,marginTop:24,justifyContent:"center",flexWrap:"wrap"}}>
+  <button onClick={playAgain} style={{...B,background:"linear-gradient(135deg,#FFD700,#FFA500)",color:"#1a1a2e",fontSize:16,fontWeight:700,padding:"14px 32px",borderRadius:14}}>
+    {t.again}
+  </button>
+  <button onClick={leaveRoom} style={{...B,background:"rgba(255,255,255,.1)",color:"rgba(255,255,255,.6)",fontSize:16,padding:"14px 32px",borderRadius:14}}>
+    {t.menu}
+  </button>
+</div>
   </div></div>);}
 
   // ════════ FALLBACK ════════
