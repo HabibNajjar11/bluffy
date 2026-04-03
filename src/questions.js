@@ -3379,7 +3379,7 @@ const QS=[
 {id:"flag_77",category:"flags",difficulty:"Medium",answer_en:"Ireland",answer_he:"אירלנד",flag_country:"Ireland",flag_code:"ie"},
 {id:"flag_78",category:"flags",difficulty:"Easy",answer_en:"Israel",answer_he:"ישראל",flag_country:"Israel",flag_code:"il"},
 {id:"flag_79",category:"flags",difficulty:"Easy",answer_en:"India",answer_he:"הודו",flag_country:"India",flag_code:"in"},
-{id:"flag_80",category:"flags",difficulty:"Medium",answer_en:"Iraq",answer_he:"עראק",flag_country:"Iraq",flag_code:"iq"},
+{id:"flag_80",category:"flags",difficulty:"Medium",answer_en:"Iraq",answer_he:"עיראק",flag_country:"Iraq",flag_code:"iq"},
 {id:"flag_82",category:"flags",difficulty:"Hard",answer_en:"Iceland",answer_he:"איסלנד",flag_country:"Iceland",flag_code:"is"},
 {id:"flag_83",category:"flags",difficulty:"Easy",answer_en:"Italy",answer_he:"איטליה",flag_country:"Italy",flag_code:"it"},
 {id:"flag_84",category:"flags",difficulty:"Hard",answer_en:"Jamaica",answer_he:"ג'מייקה",flag_country:"Jamaica",flag_code:"jm"},
